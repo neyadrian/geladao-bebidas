@@ -1,0 +1,81 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+class Produto {
+  - id: Long
+  - nome: String
+  - preco: BigDecimal
+  - quantidadeEstoque: Integer
+  - categoria: CategoriaProduto
+  - volume: Integer
+  - unidadeVolume: UnidadeVolume
+  - tipoEmbalagem: TipoEmbalagem
+}
+
+class Cliente {
+  - id: Long
+  - nome: String
+  - endereco: String
+  - telefone: String
+}
+
+class Usuario {
+  - id: Long
+  - nome: String
+  - cpf: String
+  - login: String
+  - senha: String
+}
+
+class Venda {
+  - id: Long
+  - dataVenda: LocalDateTime
+  - valorTotal: BigDecimal
+}
+
+class ItemVenda {
+  - id: Long
+  - quantidade: Integer
+  - precoUnitario: BigDecimal
+}
+
+class MovimentacaoEstoque {
+  - id: Long
+  - tipo: TipoMovimentacao
+  - quantidade: Integer
+  - dataMovimentacao: LocalDateTime
+  - motivo: String
+}
+
+enum CategoriaProduto {
+  CERVEJA
+  REFRIGERANTE
+  AGUA
+  ENERGETICO
+  DESTILADO
+  OUTROS
+}
+
+enum UnidadeVolume {
+  ML
+  LITRO
+}
+
+enum TipoEmbalagem {
+  FARDO
+  CAIXA
+  UNIDADE
+}
+
+enum TipoMovimentacao {
+  ENTRADA
+  SAIDA
+}
+
+Cliente "1" -- "N" Venda : faz >
+Usuario "1" -- "N" Venda : realiza >
+Venda "1" -- "N" ItemVenda : contém >
+Produto "1" -- "N" ItemVenda : compõe >
+Produto "1" -- "N" MovimentacaoEstoque : registra >
+
+@enduml
