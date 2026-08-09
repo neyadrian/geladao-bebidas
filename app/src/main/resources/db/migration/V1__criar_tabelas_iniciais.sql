@@ -17,7 +17,7 @@ CREATE TABLE produto (
     categoria_produto TINYINT NOT NULL,
     unidade_volume_produto VARCHAR(20) NOT NULL,
     tipo_embalagem_produto VARCHAR(20) NOT NULL
-)
+);
 
 CREATE TABLE usuario (
     id_usuario BIGINT AUTO_INCREMENT PRIMARY KEY,
@@ -25,7 +25,7 @@ CREATE TABLE usuario (
     cpf VARCHAR(50) NOT NULL,
     login VARCHAR(50) UNIQUE NOT NULL,
     senha VARCHAR(60) NOT NULL
-)
+);
 
 CREATE TABLE venda (
     id_venda BIGINT AUTO_INCREMENT PRIMARY KEY,
@@ -35,4 +35,4 @@ CREATE TABLE venda (
     id_usuario BIGINT NOT NULL,
     FOREIGN KEY (id_cliente) REFERENCES cliente(id_cliente),
     FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario)
-)
+);
