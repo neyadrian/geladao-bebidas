@@ -18,3 +18,11 @@ CREATE TABLE produto (
     unidade_volume_produto VARCHAR(20) NOT NULL,
     tipo_embalagem_produto VARCHAR(20) NOT NULL
 )
+
+CREATE TABLE usuario (
+    id_usuario BIGINT AUTO_INCREMENT PRIMARY KEY,
+    nome_usuario VARCHAR(50) NOT NULL,
+    cpf VARCHAR(50) NOT NULL,
+    login VARCHAR(50) UNIQUE NOT NULL,
+    senha VARCHAR(60) NOT NULL
+)
