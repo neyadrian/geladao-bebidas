@@ -26,3 +26,13 @@ CREATE TABLE usuario (
     login VARCHAR(50) UNIQUE NOT NULL,
     senha VARCHAR(60) NOT NULL
 )
+
+CREATE TABLE venda (
+    id_venda BIGINT AUTO_INCREMENT PRIMARY KEY,
+    data_venda DATETIME NOT NULL,
+    valor_total_venda DECIMAL(15, 2) NOT NULL,
+    id_cliente BIGINT,
+    id_usuario BIGINT NOT NULL,
+    FOREIGN KEY (id_cliente) REFERENCES cliente(id_cliente),
+    FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario)
+)
