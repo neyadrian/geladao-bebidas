@@ -48,11 +48,11 @@ CREATE TABLE item_venda (
 );
 
 CREATE TABLE movimentacao_estoque (
-                                      id_movimentacao BIGINT AUTO_INCREMENT PRIMARY KEY,
-                                      tipo_movimentacao VARCHAR(20) NOT NULL,
-                                      quantidade_movimentacao INT NOT NULL,
-                                      data_movimentacao DATETIME NOT NULL,
-                                      motivo_movimentacao VARCHAR(200),
-                                      id_produto BIGINT NOT NULL,
-                                      FOREIGN KEY (id_produto) REFERENCES produto(id_produto)
+    id_movimentacao BIGINT AUTO_INCREMENT PRIMARY KEY,
+    tipo_movimentacao VARCHAR(20) NOT NULL,
+    quantidade_movimentacao INT NOT NULL,
+    data_movimentacao DATETIME NOT NULL,
+    motivo_movimentacao VARCHAR(200),
+    id_produto BIGINT NOT NULL,
+    FOREIGN KEY (id_produto) REFERENCES produto(id_produto)
 );
