@@ -27,7 +27,7 @@ public class UsuarioService {
         return usuarioRepository.findAll();
     }
 
-    public void excluir(Usuario usuario) {
-        usuarioRepository.delete(usuario);
+    public void excluir(Long id) {
+        usuarioRepository.deleteById(id);
     }
 }
