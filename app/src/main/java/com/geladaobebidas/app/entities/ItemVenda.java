@@ -15,7 +15,7 @@ public class ItemVenda {
     private Long idItemVenda;
 
     @Column(name = "quantidade_item")
-    private int quantidadeItem;
+    private Integer quantidadeItem;
 
     @Column(name = "preco_unitario_item")
     private BigDecimal precoUnitarioItem;
