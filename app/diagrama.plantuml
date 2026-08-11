@@ -1,6 +1,5 @@
 @startuml
 skinparam classAttributeIconSize 0
-
 class Produto {
   - id: Long
   - nome: String
@@ -10,43 +9,61 @@ class Produto {
   - volume: Integer
   - unidadeVolume: UnidadeVolume
   - tipoEmbalagem: TipoEmbalagem
+  + salvar(produto: Produto): void
+  + buscarPorId(id: Long): Produto
+  + listarTodos(): List<Produto>
+  + excluir(id: Long): void
 }
-
 class Cliente {
   - id: Long
   - nome: String
   - endereco: String
   - telefone: String
+  + salvar(cliente: Cliente): void
+  + buscarPorNome(nome: String): List<Cliente>
+  + buscarTodos(): List<Cliente>
+  + excluir(id: Long): void
 }
-
 class Usuario {
   - id: Long
   - nome: String
   - cpf: String
   - login: String
   - senha: String
+  + salvar(usuario: Usuario): void
+  + buscarPorId(id: Long): Usuario
+  + listarTodos(): List<Usuario>
+  + excluir(id: Long): void
 }
-
 class Venda {
   - id: Long
   - dataVenda: LocalDateTime
   - valorTotal: BigDecimal
+  + salvar(venda: Venda): void
+  + buscarPorId(id: Long): Venda
+  + listarTodas(): List<Venda>
+  + excluir(id: Long): void
 }
-
 class ItemVenda {
   - id: Long
   - quantidade: Integer
   - precoUnitario: BigDecimal
+  + salvar(itemVenda: ItemVenda): void
+  + buscarPorId(id: Long): ItemVenda
+  + listarTodos(): List<ItemVenda>
+  + excluir(id: Long): void
 }
-
 class MovimentacaoEstoque {
   - id: Long
   - tipo: TipoMovimentacao
   - quantidade: Integer
   - dataMovimentacao: LocalDateTime
   - motivo: String
+  + salvar(movimentacao: MovimentacaoEstoque): void
+  + buscarPorId(id: Long): MovimentacaoEstoque
+  + listarTodas(): List<MovimentacaoEstoque>
+  + excluir(id: Long): void
 }
-
 enum CategoriaProduto {
   CERVEJA
   REFRIGERANTE
@@ -58,27 +75,22 @@ enum CategoriaProduto {
   VODKA
   OUTROS
 }
-
 enum UnidadeVolume {
   ML
   LITRO
 }
-
 enum TipoEmbalagem {
   FARDO
   CAIXA
   UNIDADE
 }
-
 enum TipoMovimentacao {
   ENTRADA
   SAIDA
 }
-
 Cliente "1" -- "N" Venda : faz >
 Usuario "1" -- "N" Venda : realiza >
 Venda "1" -- "N" ItemVenda : contém >
 Produto "1" -- "N" ItemVenda : compõe >
 Produto "1" -- "N" MovimentacaoEstoque : registra >
-
 @enduml
