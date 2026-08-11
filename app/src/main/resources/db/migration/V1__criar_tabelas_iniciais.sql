@@ -1,6 +1,3 @@
-CREATE DATABASE IF NOT EXISTS banco_geladao_bebidas;
-USE banco_geladao_bebidas;
-
 CREATE TABLE cliente (
     id_cliente BIGINT AUTO_INCREMENT PRIMARY KEY,
     nome_cliente VARCHAR(50) NOT NULL,
