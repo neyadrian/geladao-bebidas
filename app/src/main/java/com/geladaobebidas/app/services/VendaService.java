@@ -11,9 +11,18 @@ import java.util.List;
 public class VendaService {
 
     private final VendaRepository vendaRepository;
+    private final ItemVendaService itemVendaService;
+    private final ProdutoService produtoService;
+    private final MovimentacaoEstoqueService movimentacaoEstoqueService;
 
-    public VendaService(VendaRepository vendaRepository) {
+    public VendaService(VendaRepository vendaRepository,
+                        ItemVendaService itemVendaService,
+                        ProdutoService produtoService,
+                        MovimentacaoEstoqueService movimentacaoEstoqueService) {
         this.vendaRepository = vendaRepository;
+        this.itemVendaService = itemVendaService;
+        this.produtoService = produtoService;
+        this.movimentacaoEstoqueService = movimentacaoEstoqueService;
     }
 
     public void salvar(Venda venda) {
