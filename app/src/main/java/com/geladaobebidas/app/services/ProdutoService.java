@@ -1,6 +1,7 @@
 package com.geladaobebidas.app.services;
 
 import com.geladaobebidas.app.entities.Produto;
+import com.geladaobebidas.app.exceptions.RecursoNaoEncontradoException;
 import com.geladaobebidas.app.repositories.ProdutoRepository;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +21,8 @@ public class ProdutoService {
     }
 
     public Produto buscarPorId(Long id) {
-        return produtoRepository.findById(id).orElse(null);
+        return produtoRepository.findById(id)
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Produto não encontrado: " + id));
     }
 
     public List<Produto> listarTodos() {
