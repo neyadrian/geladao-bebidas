@@ -22,7 +22,7 @@ public class MovimentacaoEstoqueService {
 
     public MovimentacaoEstoque buscarPorId(Long id) {
         return movimentacaoEstoqueRepository.findById(id)
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Movimentação não encontrado: " + id));
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Movimentação não encontrada: " + id));
     }
 
     public List<MovimentacaoEstoque> listarTodas() {
