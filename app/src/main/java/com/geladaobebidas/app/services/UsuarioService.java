@@ -1,6 +1,7 @@
 package com.geladaobebidas.app.services;
 
 import com.geladaobebidas.app.entities.Usuario;
+import com.geladaobebidas.app.exceptions.RecursoNaoEncontradoException;
 import com.geladaobebidas.app.repositories.UsuarioRepository;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +21,8 @@ public class UsuarioService {
     }
 
     public Usuario buscarPorId(Long id) {
-        return usuarioRepository.findById(id).orElse(null);
+        return usuarioRepository.findById(id)
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Usuário não encontrado: " + id));
     }
 
     public List<Usuario> listarTodos() {
