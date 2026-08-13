@@ -1,6 +1,7 @@
 package com.geladaobebidas.app.services;
 
 import com.geladaobebidas.app.entities.Cliente;
+import com.geladaobebidas.app.exceptions.RecursoNaoEncontradoException;
 import com.geladaobebidas.app.repositories.ClienteRepository;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +22,11 @@ public class ClienteService {
 
     public List<Cliente> buscarPorNome(String nome) {
         return clienteRepository.findByNomeCliente(nome);
+    }
+
+    public Cliente buscarPorId(Long id) {
+        return clienteRepository.findById(id)
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Cliente não encontrado: " + id));
     }
 
     public List<Cliente> buscarTodos() {

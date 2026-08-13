@@ -7,5 +7,5 @@ public class ItemVendaRequest {
 
     private Long produtoId;
     private Integer quantidade;
-    
+
 }
