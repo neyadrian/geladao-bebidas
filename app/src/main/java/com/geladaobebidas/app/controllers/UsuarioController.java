@@ -1,6 +1,5 @@
 package com.geladaobebidas.app.controllers;
 
-import com.geladaobebidas.app.entities.Cliente;
 import com.geladaobebidas.app.entities.Usuario;
 import com.geladaobebidas.app.services.UsuarioService;
 import org.springframework.http.HttpStatus;
