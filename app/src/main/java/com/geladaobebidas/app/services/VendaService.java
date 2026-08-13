@@ -1,14 +1,15 @@
 package com.geladaobebidas.app.services;
 
 import com.geladaobebidas.app.dto.ItemVendaRequest;
-import com.geladaobebidas.app.entities.Cliente;
-import com.geladaobebidas.app.entities.Usuario;
-import com.geladaobebidas.app.entities.Venda;
+import com.geladaobebidas.app.entities.*;
+import com.geladaobebidas.app.enums.TipoMovimentacao;
 import com.geladaobebidas.app.exceptions.RecursoNaoEncontradoException;
 import com.geladaobebidas.app.repositories.VendaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -36,11 +37,48 @@ public class VendaService {
     }
 
     @Transactional
-    public Venda registarVenda(Long clienteId, Long usuarioId, List<ItemVendaRequest> itensDesejados) {
-        Cliente cliente = clienteService.buscarPorNome(clienteId);
+    public Venda registrarVenda(Long clienteId, Long usuarioId, List<ItemVendaRequest> itensDesejados) {
+        Cliente cliente = clienteService.buscarPorId(clienteId);
         Usuario usuario = usuarioService.buscarPorId(usuarioId);
 
+        Venda venda = new Venda();
+        venda.setCliente(cliente);
+        venda.setUsuario(usuario);
+        venda.setDataVenda(LocalDateTime.now());
+        venda.setValorTotal(BigDecimal.ZERO);
+        vendaRepository.save(venda);
 
+        BigDecimal valorTotal = BigDecimal.ZERO;
+
+        for (ItemVendaRequest itemDesejado : itensDesejados) {
+            Produto produto = produtoService.buscarPorId(itemDesejado.getProdutoId());
+
+            ItemVenda itemVenda = new ItemVenda();
+            itemVenda.setVenda(venda);
+            itemVenda.setProduto(produto);
+            itemVenda.setQuantidade(itemDesejado.getQuantidade());
+            itemVenda.setPrecoUnitario(produto.getPreco());
+            itemVendaService.salvar(itemVenda);
+
+            BigDecimal subtotal = produto.getPreco().multiply(BigDecimal.valueOf(itemDesejado.getQuantidade()));
+            valorTotal = valorTotal.add(subtotal);
+
+            produto.setQuantidadeEstoque(produto.getQuantidadeEstoque() - itemDesejado.getQuantidade());
+            produtoService.salvar(produto);
+
+            MovimentacaoEstoque movimentacao = new MovimentacaoEstoque();
+            movimentacao.setProduto(produto);
+            movimentacao.setTipoMovimentacao(TipoMovimentacao.SAIDA);
+            movimentacao.setQuantidadeMovimentacao(itemDesejado.getQuantidade());
+            movimentacao.setDataMovimentacao(LocalDateTime.now());
+            movimentacao.setMotivoMovimentacao("Venda #" + venda.getIdVenda());
+            movimentacaoEstoqueService.salvar(movimentacao);
+        }
+
+        venda.setValorTotal(valorTotal);
+        vendaRepository.save(venda);
+
+        return venda;
     }
 
     public void salvar(Venda venda) {
