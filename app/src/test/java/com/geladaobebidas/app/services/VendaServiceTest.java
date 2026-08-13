@@ -19,6 +19,9 @@ import java.util.List;
 import static org.mockito.Mockito.when;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import com.geladaobebidas.app.exceptions.RecursoNaoEncontradoException;
+
 @ExtendWith(MockitoExtension.class)
 class VendaServiceTest {
 
@@ -75,5 +78,30 @@ class VendaServiceTest {
         assertEquals(new BigDecimal("50.00"), vendaResultado.getValorTotalVenda());
         assertEquals(clienteFake, vendaResultado.getCliente());
         assertEquals(usuarioFake, vendaResultado.getUsuario());
+    }
+
+    @Test
+    void deveLancarExcecaoQuandoProdutoNaoExiste() {
+        Cliente clienteFake = new Cliente();
+        clienteFake.setIdCliente(1L);
+
+        Usuario usuarioFake = new Usuario();
+        usuarioFake.setIdUsuario(1L);
+
+        when(clienteService.buscarPorId(1L)).thenReturn(clienteFake);
+        when(usuarioService.buscarPorId(1L)).thenReturn(usuarioFake);
+        when(produtoService.buscarPorId(99L))
+                .thenThrow(new RecursoNaoEncontradoException("Produto não encontrado: 99"));
+
+        ItemVendaRequest itemRequest = new ItemVendaRequest();
+        itemRequest.setProdutoId(99L);
+        itemRequest.setQuantidade(5);
+
+        List<ItemVendaRequest> itens = new ArrayList<>();
+        itens.add(itemRequest);
+
+        assertThrows(RecursoNaoEncontradoException.class, () -> {
+            vendaService.registrarVenda(1L, 1L, itens);
+        });
     }
 }
