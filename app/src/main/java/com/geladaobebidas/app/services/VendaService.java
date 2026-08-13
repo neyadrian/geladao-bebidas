@@ -4,6 +4,7 @@ import com.geladaobebidas.app.entities.Venda;
 import com.geladaobebidas.app.exceptions.RecursoNaoEncontradoException;
 import com.geladaobebidas.app.repositories.VendaRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -23,6 +24,11 @@ public class VendaService {
         this.itemVendaService = itemVendaService;
         this.produtoService = produtoService;
         this.movimentacaoEstoqueService = movimentacaoEstoqueService;
+    }
+
+    @Transactional
+    public Venda registarVenda(Venda venda) {
+
     }
 
     public void salvar(Venda venda) {
