@@ -31,7 +31,7 @@ public class ProdutoController {
     }
 
     @GetMapping
-    private ResponseEntity<List<Produto>> listarTodos() {
+    public ResponseEntity<List<Produto>> listarTodos() {
         return ResponseEntity.ok(produtoService.listarTodos());
     }
 
