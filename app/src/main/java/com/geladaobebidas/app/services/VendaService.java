@@ -45,7 +45,7 @@ public class VendaService {
         venda.setCliente(cliente);
         venda.setUsuario(usuario);
         venda.setDataVenda(LocalDateTime.now());
-        venda.setValorTotal(BigDecimal.ZERO);
+        venda.setValorTotalVenda(BigDecimal.ZERO);
         vendaRepository.save(venda);
 
         BigDecimal valorTotal = BigDecimal.ZERO;
@@ -56,14 +56,14 @@ public class VendaService {
             ItemVenda itemVenda = new ItemVenda();
             itemVenda.setVenda(venda);
             itemVenda.setProduto(produto);
-            itemVenda.setQuantidade(itemDesejado.getQuantidade());
-            itemVenda.setPrecoUnitario(produto.getPreco());
+            itemVenda.setQuantidadeItem(itemDesejado.getQuantidade());
+            itemVenda.setPrecoUnitarioItem(produto.getPrecoProduto());
             itemVendaService.salvar(itemVenda);
 
-            BigDecimal subtotal = produto.getPreco().multiply(BigDecimal.valueOf(itemDesejado.getQuantidade()));
+            BigDecimal subtotal = produto.getPrecoProduto().multiply(BigDecimal.valueOf(itemDesejado.getQuantidade()));
             valorTotal = valorTotal.add(subtotal);
 
-            produto.setQuantidadeEstoque(produto.getQuantidadeEstoque() - itemDesejado.getQuantidade());
+            produto.setQuantidadeProduto(produto.getQuantidadeProduto() - itemDesejado.getQuantidade());
             produtoService.salvar(produto);
 
             MovimentacaoEstoque movimentacao = new MovimentacaoEstoque();
@@ -75,7 +75,7 @@ public class VendaService {
             movimentacaoEstoqueService.salvar(movimentacao);
         }
 
-        venda.setValorTotal(valorTotal);
+        venda.setValorTotalVenda(valorTotal);
         vendaRepository.save(venda);
 
         return venda;
