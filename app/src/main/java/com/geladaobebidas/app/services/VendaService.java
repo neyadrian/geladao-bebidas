@@ -26,10 +26,10 @@ public class VendaService {
         this.movimentacaoEstoqueService = movimentacaoEstoqueService;
     }
 
-    @Transactional
-    public Venda registarVenda(Venda venda) {
-
-    }
+//    @Transactional
+//    public Venda registarVenda(Venda venda) {
+//
+//    }
 
     public void salvar(Venda venda) {
         vendaRepository.save(venda);
