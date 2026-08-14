@@ -43,12 +43,13 @@ public class NotaVendaGenerator {
         Paragraph cliente = new Paragraph("Cliente: " + venda.getCliente().getNomeCliente());
         document.add(cliente);
 
-        document.add(new Paragraph(" ")); // espaço em branco antes da tabela
+        document.add(new Paragraph(" "));
 
-        PdfPTable tabela = new PdfPTable(4);
+        PdfPTable tabela = new PdfPTable(5);
         tabela.setWidthPercentage(100);
 
         tabela.addCell("Produto");
+        tabela.addCell("Embalagem");
         tabela.addCell("Quantidade");
         tabela.addCell("Preço Unitário");
         tabela.addCell("Subtotal");
@@ -57,6 +58,7 @@ public class NotaVendaGenerator {
 
         for (ItemVenda item : itens) {
             tabela.addCell(item.getProduto().getNomeProduto());
+            tabela.addCell(item.getProduto().getTipoEmbalagemProduto().toString());
             tabela.addCell(String.valueOf(item.getQuantidadeItem()));
             tabela.addCell("R$ " + item.getPrecoUnitarioItem());
 

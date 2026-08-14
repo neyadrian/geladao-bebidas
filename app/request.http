@@ -1,0 +1,54 @@
+POST http://localhost:8080/clientes
+Content-Type: application/json
+
+{
+  "nomeCliente": "João Teste",
+  "enderecoCliente": "Rua Teste, 123",
+  "telefoneCliente": "88999999999"
+}
+
+### Criar usuário
+POST http://localhost:8080/usuarios
+Content-Type: application/json
+
+{
+  "nomeUsuario": "Ney Teste",
+  "cpf": "12345678900",
+  "login": "neyteste",
+  "senha": "senha123"
+}
+
+### Criar produto
+POST http://localhost:8080/produtos
+Content-Type: application/json
+
+{
+  "nomeProduto": "Cerveja Teste",
+  "precoProduto": 10.00,
+  "quantidadeProduto": 50,
+  "categoriaProduto": 0,
+  "volumeProduto": 350,
+  "unidadeVolumeProduto": "ML",
+  "tipoEmbalagemProduto": "UNIDADE"
+}
+
+### Registrar venda
+POST http://localhost:8080/vendas
+Content-Type: application/json
+
+{
+  "clienteId": 1,
+  "usuarioId": 1,
+  "itens": [
+    { "produtoId": 1, "quantidade": 5 }
+  ]
+}
+
+### Verificar estoque baixado
+GET http://localhost:8080/produtos/1
+
+### Verificar movimentação criada
+GET http://localhost:8080/movimentacoes-estoque
+
+### Gerar nota da venda
+GET http://localhost:8080/vendas/1/nota
