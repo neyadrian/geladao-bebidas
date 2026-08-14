@@ -1,16 +1,27 @@
 package com.geladaobebidas.app.report;
 
+import com.geladaobebidas.app.entities.ItemVenda;
 import com.geladaobebidas.app.entities.Venda;
+import com.geladaobebidas.app.services.ItemVendaService;
 import com.lowagie.text.Document;
-import com.lowagie.text.pdf.PdfWriter;
-import org.springframework.stereotype.Component;
 import com.lowagie.text.Font;
 import com.lowagie.text.Paragraph;
+import com.lowagie.text.pdf.PdfPTable;
+import com.lowagie.text.pdf.PdfWriter;
+import org.springframework.stereotype.Component;
 
 import java.io.ByteArrayOutputStream;
+import java.math.BigDecimal;
+import java.util.List;
 
 @Component
 public class NotaVendaGenerator {
+
+    private final ItemVendaService itemVendaService;
+
+    public NotaVendaGenerator(ItemVendaService itemVendaService) {
+        this.itemVendaService = itemVendaService;
+    }
 
     public byte[] gerar(Venda venda) throws Exception {
         Document document = new Document();
@@ -31,6 +42,35 @@ public class NotaVendaGenerator {
 
         Paragraph cliente = new Paragraph("Cliente: " + venda.getCliente().getNomeCliente());
         document.add(cliente);
+
+        document.add(new Paragraph(" ")); // espaço em branco antes da tabela
+
+        PdfPTable tabela = new PdfPTable(4);
+        tabela.setWidthPercentage(100);
+
+        tabela.addCell("Produto");
+        tabela.addCell("Quantidade");
+        tabela.addCell("Preço Unitário");
+        tabela.addCell("Subtotal");
+
+        List<ItemVenda> itens = itemVendaService.listarPorVenda(venda);
+
+        for (ItemVenda item : itens) {
+            tabela.addCell(item.getProduto().getNomeProduto());
+            tabela.addCell(String.valueOf(item.getQuantidadeItem()));
+            tabela.addCell("R$ " + item.getPrecoUnitarioItem());
+
+            BigDecimal subtotal = item.getPrecoUnitarioItem()
+                    .multiply(BigDecimal.valueOf(item.getQuantidadeItem()));
+            tabela.addCell("R$ " + subtotal);
+        }
+
+        document.add(tabela);
+
+        document.add(new Paragraph(" "));
+        Font totalFont = new Font(Font.HELVETICA, 14, Font.BOLD);
+        Paragraph total = new Paragraph("Valor Total: R$ " + venda.getValorTotalVenda(), totalFont);
+        document.add(total);
 
         document.close();
         return outputStream.toByteArray();

@@ -1,6 +1,7 @@
 package com.geladaobebidas.app.services;
 
 import com.geladaobebidas.app.entities.ItemVenda;
+import com.geladaobebidas.app.entities.Venda;
 import com.geladaobebidas.app.exceptions.RecursoNaoEncontradoException;
 import com.geladaobebidas.app.repositories.ItemVendaRepository;
 import org.springframework.stereotype.Service;
@@ -27,6 +28,10 @@ public class ItemVendaService {
 
     public List<ItemVenda> listarTodos() {
         return itemVendaRepository.findAll();
+    }
+
+    public List<ItemVenda> listarPorVenda(Venda venda) {
+        return itemVendaRepository.findByVenda(venda);
     }
 
     public void excluir(Long id) {
