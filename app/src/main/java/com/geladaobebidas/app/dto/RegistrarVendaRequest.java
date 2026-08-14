@@ -7,7 +7,7 @@ import java.util.List;
 @Data
 public class RegistrarVendaRequest {
 
-    private Long clientId;
+    private Long clienteId;
     private Long usuarioId;
     private List<ItemVendaRequest> itens;
 }
