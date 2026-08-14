@@ -2,6 +2,7 @@ package com.geladaobebidas.app.controllers;
 
 import com.geladaobebidas.app.dto.RegistrarVendaRequest;
 import com.geladaobebidas.app.entities.Venda;
+import com.geladaobebidas.app.report.NotaVendaGenerator;
 import com.geladaobebidas.app.services.VendaService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,9 +15,11 @@ import java.util.List;
 public class VendaController {
 
     private final VendaService vendaService;
+    private final NotaVendaGenerator notaVendaGenerator;
 
-    public VendaController(VendaService vendaService) {
+    public VendaController(VendaService vendaService, NotaVendaGenerator notaVendaGenerator) {
         this.vendaService = vendaService;
+        this.notaVendaGenerator = notaVendaGenerator;
     }
 
     @PostMapping
@@ -45,5 +48,16 @@ public class VendaController {
     public ResponseEntity<Void> excluir(@PathVariable Long id) {
         vendaService.excluir(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    @GetMapping("/{id}/nota")
+    public ResponseEntity<byte[]> gerarNota(@PathVariable Long id) throws Exception {
+        Venda venda = vendaService.buscarPorId(id);
+        byte[] pdf = notaVendaGenerator.gerar(venda);
+
+        return ResponseEntity.ok()
+                .header("Content-Type", "application/pdf")
+                .header("Content-Disposition", "inline; filename=nota-venda-" + id + ".pdf")
+                .body(pdf);
     }
 }
