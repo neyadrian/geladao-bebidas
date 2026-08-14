@@ -9,5 +9,5 @@ public class RegistrarVendaRequest {
 
     private Long clientId;
     private Long usuarioId;
-    private List<ItemVendaRequest> itemVendaRequests;
+    private List<ItemVendaRequest> itens;
 }
