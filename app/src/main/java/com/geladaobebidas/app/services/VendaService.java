@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.YearMonth;
 import java.util.List;
 
 @Service
@@ -96,5 +97,13 @@ public class VendaService {
 
     public void excluir(Long id) {
         vendaRepository.deleteById(id);
+    }
+
+    public List<Venda> buscarVendasDoMes(int ano, int mes) {
+        YearMonth anoMes = YearMonth.of(ano, mes);
+        LocalDateTime inicio = anoMes.atDay(1).atStartOfDay();
+        LocalDateTime fim = anoMes.atEndOfMonth().atTime(23, 59, 59);
+
+        return vendaRepository.findByDataVendaBetween(inicio, fim);
     }
 }
