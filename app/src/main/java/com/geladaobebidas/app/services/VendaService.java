@@ -11,7 +11,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class VendaService {
@@ -105,5 +107,21 @@ public class VendaService {
         LocalDateTime fim = anoMes.atEndOfMonth().atTime(23, 59, 59);
 
         return vendaRepository.findByDataVendaBetween(inicio, fim);
+    }
+
+    public Map.Entry<Produto, Integer> produtoMaisVendidoDoMes(List<Venda> vendas) {
+        Map<Produto, Integer> vendasPorProduto = new HashMap<>();
+
+        for (Venda venda : vendas) {
+            List<ItemVenda> itens = itemVendaService.listarPorVenda(venda);
+            for (ItemVenda item : itens) {
+                vendasPorProduto.merge(item.getProduto(), item.getQuantidadeItem(), Integer::sum);
+            }
+        }
+
+        return vendasPorProduto.entrySet()
+                .stream()
+                .max(Map.Entry.comparingByValue())
+                .orElse(null);
     }
 }
