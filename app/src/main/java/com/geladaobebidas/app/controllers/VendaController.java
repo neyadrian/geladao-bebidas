@@ -3,6 +3,7 @@ package com.geladaobebidas.app.controllers;
 import com.geladaobebidas.app.dto.RegistrarVendaRequest;
 import com.geladaobebidas.app.entities.Venda;
 import com.geladaobebidas.app.report.NotaVendaGenerator;
+import com.geladaobebidas.app.report.RelatorioMensalGenerator;
 import com.geladaobebidas.app.services.VendaService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,10 +17,12 @@ public class VendaController {
 
     private final VendaService vendaService;
     private final NotaVendaGenerator notaVendaGenerator;
+    private final RelatorioMensalGenerator relatorioMensalGenerator;
 
-    public VendaController(VendaService vendaService, NotaVendaGenerator notaVendaGenerator) {
+    public VendaController(VendaService vendaService, NotaVendaGenerator notaVendaGenerator, RelatorioMensalGenerator relatorioMensalGenerator) {
         this.vendaService = vendaService;
         this.notaVendaGenerator = notaVendaGenerator;
+        this.relatorioMensalGenerator = relatorioMensalGenerator;
     }
 
     @PostMapping
@@ -58,6 +61,16 @@ public class VendaController {
         return ResponseEntity.ok()
                 .header("Content-Type", "application/pdf")
                 .header("Content-Disposition", "inline; filename=nota-venda-" + id + ".pdf")
+                .body(pdf);
+    }
+
+    @GetMapping("/relatorio-mensal")
+    public ResponseEntity<byte[]> gerarRelatorioMensal(@RequestParam int ano, @RequestParam int mes) throws Exception {
+        byte[] pdf = relatorioMensalGenerator.gerar(ano, mes);
+
+        return ResponseEntity.ok()
+                .header("Content-Type", "application/pdf")
+                .header("Content-Disposition", "inline; filename=relatorio-" + mes + "-" + ano + ".pdf")
                 .body(pdf);
     }
 }
