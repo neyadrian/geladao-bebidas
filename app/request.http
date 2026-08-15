@@ -52,3 +52,6 @@ GET http://localhost:8080/movimentacoes-estoque
 
 ### Gerar nota da venda
 GET http://localhost:8080/vendas/1/nota
+
+### Relatório mensal
+GET http://localhost:8080/vendas/relatorio-mensal?ano=2026&mes=8
