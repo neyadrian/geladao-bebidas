@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.ByteArrayOutputStream;
 import java.math.BigDecimal;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Component
@@ -37,7 +38,8 @@ public class NotaVendaGenerator {
         Paragraph numeroVenda = new Paragraph("Nota de Venda #" + venda.getIdVenda());
         document.add(numeroVenda);
 
-        Paragraph data = new Paragraph("Data: " + venda.getDataVenda());
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+        Paragraph data = new Paragraph("Data: " + venda.getDataVenda().format(formatter));
         document.add(data);
 
         Paragraph cliente = new Paragraph("Cliente: " + venda.getCliente().getNomeCliente());
