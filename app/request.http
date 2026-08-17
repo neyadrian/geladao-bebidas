@@ -55,3 +55,21 @@ GET http://localhost:8080/vendas/1/nota
 
 ### Relatório mensal
 GET http://localhost:8080/vendas/relatorio-mensal?ano=2026&mes=8
+
+### Tentar listar produtos sem login (deve falhar)
+GET http://localhost:8080/produtos
+
+### Cadastrar novo usuário (rota livre)
+POST http://localhost:8080/usuarios
+Content-Type: application/json
+
+{
+  "nomeUsuario": "Maria Segura",
+  "cpf": "98765432100",
+  "login": "mariasegura",
+  "senha": "minhasenha123"
+}
+
+### Listar produtos autenticado
+GET http://localhost:8080/produtos
+Authorization: Basic mariasegura minhasenha123
