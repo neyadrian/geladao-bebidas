@@ -26,20 +26,11 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<Map<String, String>> login(@RequestBody LoginRequest request) {
-        try {
-            authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(request.getLogin(), request.getSenha())
-            );
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(request.getLogin(), request.getSenha())
+        );
 
-            String token = jwtService.gerarToken(request.getLogin());
-            return ResponseEntity.ok(Map.of("token", token));
-
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            return ResponseEntity.status(500).body(Map.of(
-                    "message", "Erro no login",
-                    "detalhe", ex.getClass().getSimpleName() + ": " + ex.getMessage()
-            ));
-        }
+        String token = jwtService.gerarToken(request.getLogin());
+        return ResponseEntity.ok(Map.of("token", token));
     }
 }
