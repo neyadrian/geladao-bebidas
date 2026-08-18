@@ -8,9 +8,21 @@ export class ApiError extends Error {
 }
 
 function authHeader(auth) {
-  if (!auth) return {};
-  const token = btoa(`${auth.login}:${auth.senha}`);
-  return { Authorization: `Basic ${token}` };
+  if (!auth?.token) return {};
+  return { Authorization: `Bearer ${auth.token}` };
+}
+
+export async function login(login, senha) {
+  const res = await fetch(`${API_BASE}/auth/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ login, senha }),
+  });
+  const body = await res.json().catch(() => null);
+  if (!res.ok) {
+    throw new ApiError(res.status, body?.message || "Login ou senha incorretos.");
+  }
+  return { token: body.token, login };
 }
 
 async function handle(res) {

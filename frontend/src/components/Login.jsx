@@ -1,28 +1,26 @@
 import { useState } from "react";
-import { apiGet, ApiError } from "../api.js";
+import { login as apiLogin, ApiError } from "../api.js";
 
 export default function Login({ onLogin }) {
-  const [login, setLogin] = useState("");
+  const [loginValue, setLoginValue] = useState("");
   const [senha, setSenha] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
   async function handleSubmit(e) {
     e.preventDefault();
-    if (!login.trim() || !senha) {
+    if (!loginValue.trim() || !senha) {
       setError("Preencha login e senha.");
       return;
     }
     setLoading(true);
     setError("");
-    const auth = { login: login.trim(), senha };
     try {
-      // Any protected route confirms the credentials are valid.
-      await apiGet("/produtos", auth);
+      const auth = await apiLogin(loginValue.trim(), senha);
       onLogin(auth);
     } catch (err) {
-      if (err instanceof ApiError && err.status === 401) {
-        setError("Login ou senha incorretos.");
+      if (err instanceof ApiError) {
+        setError(err.message);
       } else {
         setError("Não foi possível conectar ao servidor. Confira se a API está no ar.");
       }
@@ -44,8 +42,8 @@ export default function Login({ onLogin }) {
             <input
               id="login"
               autoFocus
-              value={login}
-              onChange={(e) => setLogin(e.target.value)}
+              value={loginValue}
+              onChange={(e) => setLoginValue(e.target.value)}
               placeholder="seu.login"
               autoComplete="username"
             />
