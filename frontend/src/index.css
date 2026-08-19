@@ -484,6 +484,44 @@ tbody tr:hover {
   color: var(--wood-950);
 }
 
+/* ---------- Search box ---------- */
+
+.search-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--cream-50);
+  border: 1.5px solid var(--line);
+  border-radius: 100px;
+  padding: 7px 14px;
+  transition: border-color 0.12s ease, background 0.12s ease;
+}
+
+.search-box:focus-within {
+  border-color: var(--gold-500);
+  background: var(--paper);
+}
+
+.search-icon {
+  font-size: 13px;
+  opacity: 0.6;
+  line-height: 1;
+}
+
+.search-box input {
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 13.5px;
+  color: var(--ink-900);
+  width: 180px;
+  padding: 0;
+}
+
+.search-box input::placeholder {
+  color: var(--ink-500);
+}
+
 /* ---------- Toast / banner ---------- */
 
 .banner {

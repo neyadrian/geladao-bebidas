@@ -17,7 +17,7 @@ const emptyForm = {
   nomeProduto: "",
   precoProduto: "",
   quantidadeProduto: "",
-  categoriaProduto: "0",
+  categoriaProduto: "CERVEJA",
   volumeProduto: "",
   unidadeVolumeProduto: "ML",
   tipoEmbalagemProduto: "UNIDADE",
@@ -31,6 +31,7 @@ export default function ProductsPage({ auth }) {
   const [saving, setSaving] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [page, setPage] = useState(1);
+  const [search, setSearch] = useState("");
 
   async function load() {
     setLoading(true);
@@ -55,12 +56,13 @@ export default function ProductsPage({ auth }) {
   }
 
   function startEdit(produto) {
+    setError("");
     setEditingId(produto.idProduto);
     setForm({
       nomeProduto: produto.nomeProduto,
       precoProduto: String(produto.precoProduto),
       quantidadeProduto: String(produto.quantidadeProduto),
-      categoriaProduto: String(produto.categoriaProduto),
+      categoriaProduto: produto.categoriaProduto,
       volumeProduto: String(produto.volumeProduto),
       unidadeVolumeProduto: produto.unidadeVolumeProduto,
       tipoEmbalagemProduto: produto.tipoEmbalagemProduto,
@@ -69,6 +71,7 @@ export default function ProductsPage({ auth }) {
   }
 
   function cancelEdit() {
+    setError("");
     setEditingId(null);
     setForm(emptyForm);
   }
@@ -81,7 +84,7 @@ export default function ProductsPage({ auth }) {
       nomeProduto: form.nomeProduto.trim(),
       precoProduto: parseFloat(form.precoProduto),
       quantidadeProduto: parseInt(form.quantidadeProduto, 10),
-      categoriaProduto: parseInt(form.categoriaProduto, 10),
+      categoriaProduto: form.categoriaProduto,
       volumeProduto: parseInt(form.volumeProduto, 10),
       unidadeVolumeProduto: form.unidadeVolumeProduto,
       tipoEmbalagemProduto: form.tipoEmbalagemProduto,
@@ -120,7 +123,10 @@ export default function ProductsPage({ auth }) {
     }
   }
 
-  const { pageItems, totalPages, safePage, pageSize } = usePagination(produtos, page);
+  const filtrados = produtos.filter((p) =>
+    p.nomeProduto.toLowerCase().includes(search.trim().toLowerCase())
+  );
+  const { pageItems, totalPages, safePage, pageSize } = usePagination(filtrados, page);
 
   return (
     <div>
@@ -166,8 +172,8 @@ export default function ProductsPage({ auth }) {
                 value={form.categoriaProduto}
                 onChange={(e) => updateField("categoriaProduto", e.target.value)}
               >
-                {CATEGORIAS.map((cat, idx) => (
-                  <option key={cat} value={idx}>
+                {CATEGORIAS.map((cat) => (
+                  <option key={cat} value={cat}>
                     {CATEGORIA_LABELS[cat]}
                   </option>
                 ))}
@@ -255,14 +261,31 @@ export default function ProductsPage({ auth }) {
       </section>
 
       <section className="card">
-        <div className="card-head">
+        <div className="card-head" style={{ gap: 16, flexWrap: "wrap" }}>
           <h2>Produtos cadastrados</h2>
-          <span className="count">{produtos.length}</span>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, marginLeft: "auto" }}>
+            <div className="search-box">
+              <span className="search-icon" aria-hidden="true">🔍</span>
+              <input
+                type="text"
+                value={search}
+                onChange={(e) => {
+                  setSearch(e.target.value);
+                  setPage(1);
+                }}
+                placeholder="Buscar produto…"
+                aria-label="Buscar produto por nome"
+              />
+            </div>
+            <span className="count">{filtrados.length}</span>
+          </div>
         </div>
         {loading ? (
           <Loading />
         ) : produtos.length === 0 ? (
           <EmptyState glyph="🍺" title="Nenhum produto ainda" hint="Cadastre o primeiro produto acima." />
+        ) : filtrados.length === 0 ? (
+          <EmptyState glyph="🔍" title="Nenhum produto encontrado" hint={`Nada bate com "${search}".`} />
         ) : (
           <>
             <div className="table-wrap">
@@ -287,7 +310,7 @@ export default function ProductsPage({ auth }) {
                         </div>
                       </td>
                       <td>
-                        <span className="tag">{CATEGORIA_LABELS[CATEGORIAS[p.categoriaProduto]] || "—"}</span>
+                        <span className="tag">{CATEGORIA_LABELS[p.categoriaProduto] || "—"}</span>
                       </td>
                       <td>{p.tipoEmbalagemProduto}</td>
                       <td className="numeric">{formatBRL(p.precoProduto)}</td>
@@ -310,7 +333,7 @@ export default function ProductsPage({ auth }) {
             <Pagination
               page={safePage}
               totalPages={totalPages}
-              total={produtos.length}
+              total={filtrados.length}
               pageSize={pageSize}
               onChange={setPage}
             />

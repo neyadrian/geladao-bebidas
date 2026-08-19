@@ -37,6 +37,7 @@ export default function ClientsPage({ auth }) {
   }
 
   function startEdit(cliente) {
+    setError("");
     setEditingId(cliente.idCliente);
     setForm({
       nomeCliente: cliente.nomeCliente,
@@ -47,6 +48,7 @@ export default function ClientsPage({ auth }) {
   }
 
   function cancelEdit() {
+    setError("");
     setEditingId(null);
     setForm(emptyForm);
   }

@@ -24,8 +24,9 @@ public class ClienteController {
         return ResponseEntity.status(HttpStatus.CREATED).body(cliente);
     }
 
-    @PutMapping
-    public ResponseEntity<Cliente> atualizar(@RequestBody Cliente cliente) {
+    @PutMapping("/{id}")
+    public ResponseEntity<Cliente> atualizar(@PathVariable Long id, @RequestBody Cliente cliente) {
+        cliente.setIdCliente(id);
         clienteService.salvar(cliente);
         return ResponseEntity.ok(cliente);
     }
