@@ -30,9 +30,12 @@ async function handle(res) {
   const isJson = res.headers.get("content-type")?.includes("application/json");
   const body = isJson ? await res.json().catch(() => null) : await res.text().catch(() => "");
   if (!res.ok) {
+    if (res.status === 401) {
+      window.dispatchEvent(new Event("geladao-auth-expired"));
+    }
     const message =
       res.status === 401
-        ? "Login ou senha incorretos."
+        ? "Sessão expirada. Faça login novamente."
         : (isJson && body?.message) || (typeof body === "string" && body) || `Erro ${res.status}`;
     throw new ApiError(res.status, message);
   }
@@ -65,6 +68,9 @@ export async function apiDelete(path, auth) {
 export async function downloadPdf(path, auth, filename) {
   const res = await fetch(`${API_BASE}${path}`, { headers: { ...authHeader(auth) } });
   if (!res.ok) {
+    if (res.status === 401) {
+      window.dispatchEvent(new Event("geladao-auth-expired"));
+    }
     throw new ApiError(res.status, res.status === 401 ? "Sessão expirada, entre novamente." : `Erro ${res.status}`);
   }
   const blob = await res.blob();
