@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { apiGet, apiSend, downloadPdf, ApiError, formatBRL, formatDate } from "../api.js";
 import { Banner, EmptyState, Loading } from "./Bits.jsx";
+import Pagination, { usePagination } from "./Pagination.jsx";
 
 let itemKeySeq = 1;
 function newItem() {
@@ -21,6 +22,7 @@ export default function SalesPage({ auth }) {
   const [itens, setItens] = useState([newItem()]);
   const [saving, setSaving] = useState(false);
   const [downloadingId, setDownloadingId] = useState(null);
+  const [page, setPage] = useState(1);
 
   async function load() {
     setLoading(true);
@@ -216,38 +218,52 @@ export default function SalesPage({ auth }) {
         ) : vendas.length === 0 ? (
           <EmptyState glyph="🛒" title="Nenhuma venda registrada" hint="Registre a primeira venda acima." />
         ) : (
-          <div className="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Venda</th>
-                  <th>Cliente</th>
-                  <th>Data</th>
-                  <th>Total</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody>
-                {vendas.map((v) => (
-                  <tr key={v.idVenda}>
-                    <td className="numeric">#{v.idVenda}</td>
-                    <td>{v.cliente?.nomeCliente || "—"}</td>
-                    <td>{formatDate(v.dataVenda)}</td>
-                    <td className="numeric">{formatBRL(v.valorTotalVenda)}</td>
-                    <td>
-                      <button
-                        className="btn btn-gold btn-sm"
-                        onClick={() => handleNota(v.idVenda)}
-                        disabled={downloadingId === v.idVenda}
-                      >
-                        {downloadingId === v.idVenda ? "Gerando…" : "Baixar nota"}
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          (() => {
+            const { pageItems, totalPages, safePage, pageSize } = usePagination(vendas, page);
+            return (
+              <>
+                <div className="table-wrap">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Venda</th>
+                        <th>Cliente</th>
+                        <th>Data</th>
+                        <th>Total</th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {pageItems.map((v) => (
+                        <tr key={v.idVenda}>
+                          <td className="numeric">#{v.idVenda}</td>
+                          <td>{v.cliente?.nomeCliente || "—"}</td>
+                          <td>{formatDate(v.dataVenda)}</td>
+                          <td className="numeric">{formatBRL(v.valorTotalVenda)}</td>
+                          <td>
+                            <button
+                              className="btn btn-gold btn-sm"
+                              onClick={() => handleNota(v.idVenda)}
+                              disabled={downloadingId === v.idVenda}
+                            >
+                              {downloadingId === v.idVenda ? "Gerando…" : "Baixar nota"}
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                <Pagination
+                  page={safePage}
+                  totalPages={totalPages}
+                  total={vendas.length}
+                  pageSize={pageSize}
+                  onChange={setPage}
+                />
+              </>
+            );
+          })()
         )}
       </section>
     </div>

@@ -11,6 +11,7 @@ import {
   formatBRL,
 } from "../api.js";
 import { Banner, EmptyState, Loading } from "./Bits.jsx";
+import Pagination, { usePagination } from "./Pagination.jsx";
 
 const emptyForm = {
   nomeProduto: "",
@@ -28,6 +29,8 @@ export default function ProductsPage({ auth }) {
   const [error, setError] = useState("");
   const [form, setForm] = useState(emptyForm);
   const [saving, setSaving] = useState(false);
+  const [editingId, setEditingId] = useState(null);
+  const [page, setPage] = useState(1);
 
   async function load() {
     setLoading(true);
@@ -51,24 +54,55 @@ export default function ProductsPage({ auth }) {
     setForm((f) => ({ ...f, [key]: value }));
   }
 
+  function startEdit(produto) {
+    setEditingId(produto.idProduto);
+    setForm({
+      nomeProduto: produto.nomeProduto,
+      precoProduto: String(produto.precoProduto),
+      quantidadeProduto: String(produto.quantidadeProduto),
+      categoriaProduto: String(produto.categoriaProduto),
+      volumeProduto: String(produto.volumeProduto),
+      unidadeVolumeProduto: produto.unidadeVolumeProduto,
+      tipoEmbalagemProduto: produto.tipoEmbalagemProduto,
+    });
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  function cancelEdit() {
+    setEditingId(null);
+    setForm(emptyForm);
+  }
+
   async function handleSubmit(e) {
     e.preventDefault();
     setSaving(true);
     setError("");
+    const payload = {
+      nomeProduto: form.nomeProduto.trim(),
+      precoProduto: parseFloat(form.precoProduto),
+      quantidadeProduto: parseInt(form.quantidadeProduto, 10),
+      categoriaProduto: parseInt(form.categoriaProduto, 10),
+      volumeProduto: parseInt(form.volumeProduto, 10),
+      unidadeVolumeProduto: form.unidadeVolumeProduto,
+      tipoEmbalagemProduto: form.tipoEmbalagemProduto,
+    };
     try {
-      await apiSend("POST", "/produtos", auth, {
-        nomeProduto: form.nomeProduto.trim(),
-        precoProduto: parseFloat(form.precoProduto),
-        quantidadeProduto: parseInt(form.quantidadeProduto, 10),
-        categoriaProduto: parseInt(form.categoriaProduto, 10),
-        volumeProduto: parseInt(form.volumeProduto, 10),
-        unidadeVolumeProduto: form.unidadeVolumeProduto,
-        tipoEmbalagemProduto: form.tipoEmbalagemProduto,
-      });
+      if (editingId) {
+        await apiSend("PUT", `/produtos/${editingId}`, auth, payload);
+      } else {
+        await apiSend("POST", "/produtos", auth, payload);
+      }
       setForm(emptyForm);
+      setEditingId(null);
       await load();
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : "Não foi possível cadastrar o produto.");
+      setError(
+        err instanceof ApiError
+          ? err.message
+          : editingId
+          ? "Não foi possível atualizar o produto."
+          : "Não foi possível cadastrar o produto."
+      );
     } finally {
       setSaving(false);
     }
@@ -76,13 +110,17 @@ export default function ProductsPage({ auth }) {
 
   async function handleDelete(id) {
     if (!window.confirm("Excluir este produto?")) return;
+    setError("");
     try {
       await apiDelete(`/produtos/${id}`, auth);
       setProdutos((list) => list.filter((p) => p.idProduto !== id));
+      if (editingId === id) cancelEdit();
     } catch (err) {
       setError(err instanceof ApiError ? err.message : "Não foi possível excluir o produto.");
     }
   }
+
+  const { pageItems, totalPages, safePage, pageSize } = usePagination(produtos, page);
 
   return (
     <div>
@@ -97,7 +135,18 @@ export default function ProductsPage({ auth }) {
       <Banner>{error}</Banner>
 
       <section className="card card-pad" style={{ marginBottom: 24 }}>
-        <h2 style={{ fontSize: 17, marginBottom: 16 }}>Novo produto</h2>
+        {editingId ? (
+          <div className="editing-banner">
+            <span>
+              Editando: <strong>{form.nomeProduto}</strong>
+            </span>
+            <button className="btn btn-ghost btn-sm" onClick={cancelEdit} type="button">
+              Cancelar edição
+            </button>
+          </div>
+        ) : (
+          <h2 style={{ fontSize: 17, marginBottom: 16 }}>Novo produto</h2>
+        )}
         <form onSubmit={handleSubmit}>
           <div className="field-grid">
             <div className="field">
@@ -193,8 +242,13 @@ export default function ProductsPage({ auth }) {
             </div>
           </div>
           <div className="form-actions">
+            {editingId && (
+              <button className="btn btn-ghost" type="button" onClick={cancelEdit}>
+                Cancelar
+              </button>
+            )}
             <button className="btn btn-primary" type="submit" disabled={saving}>
-              {saving ? "Salvando…" : "Cadastrar produto"}
+              {saving ? "Salvando…" : editingId ? "Salvar alterações" : "Cadastrar produto"}
             </button>
           </div>
         </form>
@@ -210,43 +264,57 @@ export default function ProductsPage({ auth }) {
         ) : produtos.length === 0 ? (
           <EmptyState glyph="🍺" title="Nenhum produto ainda" hint="Cadastre o primeiro produto acima." />
         ) : (
-          <div className="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Produto</th>
-                  <th>Categoria</th>
-                  <th>Embalagem</th>
-                  <th>Preço</th>
-                  <th>Estoque</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody>
-                {produtos.map((p) => (
-                  <tr key={p.idProduto}>
-                    <td>
-                      <strong>{p.nomeProduto}</strong>
-                      <div style={{ fontSize: 12, color: "var(--ink-500)" }}>
-                        {p.volumeProduto} {p.unidadeVolumeProduto === "ML" ? "ml" : "L"}
-                      </div>
-                    </td>
-                    <td>
-                      <span className="tag">{CATEGORIA_LABELS[CATEGORIAS[p.categoriaProduto]] || "—"}</span>
-                    </td>
-                    <td>{p.tipoEmbalagemProduto}</td>
-                    <td className="numeric">{formatBRL(p.precoProduto)}</td>
-                    <td className="numeric">{p.quantidadeProduto}</td>
-                    <td>
-                      <button className="btn btn-danger btn-sm" onClick={() => handleDelete(p.idProduto)}>
-                        Excluir
-                      </button>
-                    </td>
+          <>
+            <div className="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Produto</th>
+                    <th>Categoria</th>
+                    <th>Embalagem</th>
+                    <th>Preço</th>
+                    <th>Estoque</th>
+                    <th></th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {pageItems.map((p) => (
+                    <tr key={p.idProduto}>
+                      <td>
+                        <strong>{p.nomeProduto}</strong>
+                        <div style={{ fontSize: 12, color: "var(--ink-500)" }}>
+                          {p.volumeProduto} {p.unidadeVolumeProduto === "ML" ? "ml" : "L"}
+                        </div>
+                      </td>
+                      <td>
+                        <span className="tag">{CATEGORIA_LABELS[CATEGORIAS[p.categoriaProduto]] || "—"}</span>
+                      </td>
+                      <td>{p.tipoEmbalagemProduto}</td>
+                      <td className="numeric">{formatBRL(p.precoProduto)}</td>
+                      <td className="numeric">{p.quantidadeProduto}</td>
+                      <td>
+                        <div className="row-actions">
+                          <button className="btn btn-edit btn-sm" onClick={() => startEdit(p)}>
+                            Editar
+                          </button>
+                          <button className="btn btn-danger btn-sm" onClick={() => handleDelete(p.idProduto)}>
+                            Excluir
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <Pagination
+              page={safePage}
+              totalPages={totalPages}
+              total={produtos.length}
+              pageSize={pageSize}
+              onChange={setPage}
+            />
+          </>
         )}
       </section>
     </div>

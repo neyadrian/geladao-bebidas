@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { apiGet, apiSend, apiDelete, ApiError } from "../api.js";
 import { Banner, EmptyState, Loading } from "./Bits.jsx";
+import Pagination, { usePagination } from "./Pagination.jsx";
 
 const emptyForm = { nomeCliente: "", enderecoCliente: "", telefoneCliente: "" };
 
@@ -10,6 +11,8 @@ export default function ClientsPage({ auth }) {
   const [error, setError] = useState("");
   const [form, setForm] = useState(emptyForm);
   const [saving, setSaving] = useState(false);
+  const [editingId, setEditingId] = useState(null);
+  const [page, setPage] = useState(1);
 
   async function load() {
     setLoading(true);
@@ -33,20 +36,47 @@ export default function ClientsPage({ auth }) {
     setForm((f) => ({ ...f, [key]: value }));
   }
 
+  function startEdit(cliente) {
+    setEditingId(cliente.idCliente);
+    setForm({
+      nomeCliente: cliente.nomeCliente,
+      enderecoCliente: cliente.enderecoCliente,
+      telefoneCliente: cliente.telefoneCliente,
+    });
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  function cancelEdit() {
+    setEditingId(null);
+    setForm(emptyForm);
+  }
+
   async function handleSubmit(e) {
     e.preventDefault();
     setSaving(true);
     setError("");
+    const payload = {
+      nomeCliente: form.nomeCliente.trim(),
+      enderecoCliente: form.enderecoCliente.trim(),
+      telefoneCliente: form.telefoneCliente.trim(),
+    };
     try {
-      await apiSend("POST", "/clientes", auth, {
-        nomeCliente: form.nomeCliente.trim(),
-        enderecoCliente: form.enderecoCliente.trim(),
-        telefoneCliente: form.telefoneCliente.trim(),
-      });
+      if (editingId) {
+        await apiSend("PUT", `/clientes/${editingId}`, auth, payload);
+      } else {
+        await apiSend("POST", "/clientes", auth, payload);
+      }
       setForm(emptyForm);
+      setEditingId(null);
       await load();
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : "Não foi possível cadastrar o cliente.");
+      setError(
+        err instanceof ApiError
+          ? err.message
+          : editingId
+          ? "Não foi possível atualizar o cliente."
+          : "Não foi possível cadastrar o cliente."
+      );
     } finally {
       setSaving(false);
     }
@@ -54,13 +84,17 @@ export default function ClientsPage({ auth }) {
 
   async function handleDelete(id) {
     if (!window.confirm("Excluir este cliente?")) return;
+    setError("");
     try {
       await apiDelete(`/clientes/${id}`, auth);
       setClientes((list) => list.filter((c) => c.idCliente !== id));
+      if (editingId === id) cancelEdit();
     } catch (err) {
       setError(err instanceof ApiError ? err.message : "Não foi possível excluir o cliente.");
     }
   }
+
+  const { pageItems, totalPages, safePage, pageSize } = usePagination(clientes, page);
 
   return (
     <div>
@@ -75,7 +109,18 @@ export default function ClientsPage({ auth }) {
       <Banner>{error}</Banner>
 
       <section className="card card-pad" style={{ marginBottom: 24 }}>
-        <h2 style={{ fontSize: 17, marginBottom: 16 }}>Novo cliente</h2>
+        {editingId ? (
+          <div className="editing-banner">
+            <span>
+              Editando: <strong>{form.nomeCliente}</strong>
+            </span>
+            <button className="btn btn-ghost btn-sm" onClick={cancelEdit} type="button">
+              Cancelar edição
+            </button>
+          </div>
+        ) : (
+          <h2 style={{ fontSize: 17, marginBottom: 16 }}>Novo cliente</h2>
+        )}
         <form onSubmit={handleSubmit}>
           <div className="field-grid">
             <div className="field">
@@ -110,8 +155,13 @@ export default function ClientsPage({ auth }) {
             </div>
           </div>
           <div className="form-actions">
+            {editingId && (
+              <button className="btn btn-ghost" type="button" onClick={cancelEdit}>
+                Cancelar
+              </button>
+            )}
             <button className="btn btn-primary" type="submit" disabled={saving}>
-              {saving ? "Salvando…" : "Cadastrar cliente"}
+              {saving ? "Salvando…" : editingId ? "Salvar alterações" : "Cadastrar cliente"}
             </button>
           </div>
         </form>
@@ -127,34 +177,48 @@ export default function ClientsPage({ auth }) {
         ) : clientes.length === 0 ? (
           <EmptyState glyph="🧾" title="Nenhum cliente ainda" hint="Cadastre o primeiro cliente acima." />
         ) : (
-          <div className="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Nome</th>
-                  <th>Telefone</th>
-                  <th>Endereço</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody>
-                {clientes.map((c) => (
-                  <tr key={c.idCliente}>
-                    <td>
-                      <strong>{c.nomeCliente}</strong>
-                    </td>
-                    <td>{c.telefoneCliente}</td>
-                    <td>{c.enderecoCliente}</td>
-                    <td>
-                      <button className="btn btn-danger btn-sm" onClick={() => handleDelete(c.idCliente)}>
-                        Excluir
-                      </button>
-                    </td>
+          <>
+            <div className="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Nome</th>
+                    <th>Telefone</th>
+                    <th>Endereço</th>
+                    <th></th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {pageItems.map((c) => (
+                    <tr key={c.idCliente}>
+                      <td>
+                        <strong>{c.nomeCliente}</strong>
+                      </td>
+                      <td>{c.telefoneCliente}</td>
+                      <td>{c.enderecoCliente}</td>
+                      <td>
+                        <div className="row-actions">
+                          <button className="btn btn-edit btn-sm" onClick={() => startEdit(c)}>
+                            Editar
+                          </button>
+                          <button className="btn btn-danger btn-sm" onClick={() => handleDelete(c.idCliente)}>
+                            Excluir
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <Pagination
+              page={safePage}
+              totalPages={totalPages}
+              total={clientes.length}
+              pageSize={pageSize}
+              onChange={setPage}
+            />
+          </>
         )}
       </section>
     </div>

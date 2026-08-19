@@ -390,6 +390,100 @@ tbody tr:hover {
   font-size: 14px;
 }
 
+/* ---------- Pagination ---------- */
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 22px;
+  border-top: 1px solid var(--line);
+  flex-wrap: wrap;
+}
+
+.pagination .info {
+  font-size: 13px;
+  color: var(--ink-500);
+  font-family: var(--font-mono);
+}
+
+.pagination .controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.page-btn {
+  min-width: 32px;
+  height: 32px;
+  padding: 0 8px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: var(--paper);
+  color: var(--ink-700);
+  font-size: 13px;
+  font-weight: 600;
+  font-family: var(--font-mono);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.12s ease, border-color 0.12s ease;
+}
+
+.page-btn:hover:not(:disabled) {
+  background: var(--cream-100);
+  border-color: var(--gold-500);
+}
+
+.page-btn.active {
+  background: var(--wine-700);
+  border-color: var(--wine-700);
+  color: var(--cream-50);
+}
+
+.page-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ---------- Row action buttons ---------- */
+
+.row-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.btn-edit {
+  background: transparent;
+  color: var(--wood-700);
+  border: 1px solid var(--line);
+  padding: 6px 12px;
+}
+
+.btn-edit:hover {
+  background: var(--cream-100);
+  border-color: var(--gold-500);
+}
+
+.editing-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: var(--cream-100);
+  border: 1px solid var(--gold-400);
+  border-radius: var(--radius-sm);
+  padding: 10px 16px;
+  margin-bottom: 16px;
+  font-size: 13.5px;
+  color: var(--ink-700);
+}
+
+.editing-banner strong {
+  color: var(--wood-950);
+}
+
 /* ---------- Toast / banner ---------- */
 
 .banner {
