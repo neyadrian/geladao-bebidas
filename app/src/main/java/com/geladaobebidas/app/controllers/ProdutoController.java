@@ -41,4 +41,10 @@ public class ProdutoController {
         return ResponseEntity.noContent().build();
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<Produto> atualizar(@PathVariable Long id, @RequestBody Produto produto) {
+        produto.setIdProduto(id);
+        produtoService.salvar(produto);
+        return ResponseEntity.ok(produto);
+    }
 }
