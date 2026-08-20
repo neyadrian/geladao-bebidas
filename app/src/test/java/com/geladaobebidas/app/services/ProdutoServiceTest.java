@@ -77,4 +77,13 @@ class ProdutoServiceTest {
         assertEquals(2, resultado.size());
         assertEquals(produtosFake, resultado);
     }
+
+    @Test
+    void exlcuirDeveChamarRepositoryComIdCorreto() {
+        Long id = 1L;
+
+        produtoService.excluir(id);
+
+        verify(produtoRepository).deleteById(id);
+    }
 }
