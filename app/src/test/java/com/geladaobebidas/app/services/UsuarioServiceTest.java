@@ -88,4 +88,13 @@ class UsuarioServiceTest {
         assertEquals(2, resultado.size());
         assertEquals(usuariosFake, resultado);
     }
+
+    @Test
+    void excluirDeveChamarRepositoryComIdCorreto() {
+        Long id = 1L;
+
+        usuarioService.excluir(id);
+
+        verify(usuarioRepository).deleteById(id);
+    }
 }
