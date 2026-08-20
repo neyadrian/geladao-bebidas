@@ -14,6 +14,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -52,5 +53,19 @@ class UsuarioServiceTest {
         });
     }
 
-    
+    @Test
+    void salvarDeveCriptografarSenhaEChamarRepositoryComUsuarioCorreto() {
+        Usuario usuarioFake = new Usuario();
+        usuarioFake.setIdUsuario(1L);
+        usuarioFake.setNomeUsuario("Usuario Teste");
+        usuarioFake.setSenha("senha123");
+
+        when(passwordEncoder.encode("senha124")).thenReturn("senhaCriptografada");
+
+        usuarioService.salvar(usuarioFake);
+
+        assertEquals("senhaCriptografada", usuarioFake.getSenha());
+        verify(passwordEncoder).encode("senha123");
+        verify(usuarioRepository).save(usuarioFake);
+    }
 }
