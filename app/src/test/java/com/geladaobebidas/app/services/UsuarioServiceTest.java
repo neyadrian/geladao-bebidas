@@ -10,6 +10,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -67,5 +68,24 @@ class UsuarioServiceTest {
         assertEquals("senhaCriptografada", usuarioFake.getSenha());
         verify(passwordEncoder).encode("senha123");
         verify(usuarioRepository).save(usuarioFake);
+    }
+
+    @Test
+    void listarTodosDeveRetornarListaDeUsuarios() {
+        Usuario usuarioFake = new Usuario();
+        usuarioFake.setIdUsuario(1L);
+        usuarioFake.setNomeUsuario("Usuario Teste");
+
+        Usuario usuarioFake2 = new Usuario();
+        usuarioFake2.setIdUsuario(2L);
+        usuarioFake2.setNomeUsuario("Usuario Teste 2");
+
+        List<Usuario> usuariosFake = List.of(usuarioFake, usuarioFake2);
+        when(usuarioRepository.findAll()).thenReturn(usuariosFake);
+
+        List<Usuario> resultado = usuarioService.listarTodos();
+
+        assertEquals(2, resultado.size());
+        assertEquals(usuariosFake, resultado);
     }
 }
