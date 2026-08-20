@@ -9,6 +9,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -56,5 +57,24 @@ class ProdutoServiceTest {
         produtoService.salvar(produtoFake);
 
         verify(produtoRepository).save(produtoFake);
+    }
+
+    @Test
+    void listarTodosDeveRetornarListaDeProdutos() {
+        Produto produtoFake = new Produto();
+        produtoFake.setIdProduto(1L);
+        produtoFake.setNomeProduto("Cerveja Teste");
+
+        Produto outroProdutoFake = new Produto();
+        outroProdutoFake.setIdProduto(2L);
+        outroProdutoFake.setNomeProduto("Refrigerante Teste");
+
+        List<Produto> produtosFake = List.of(produtoFake, outroProdutoFake);
+        when(produtoRepository.findAll()).thenReturn(produtosFake);
+
+        List<Produto> resultado = produtoService.listarTodos();
+
+        assertEquals(2, resultado.size());
+        assertEquals(produtosFake, resultado);
     }
 }
