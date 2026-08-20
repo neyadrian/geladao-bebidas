@@ -13,6 +13,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -44,5 +45,16 @@ class ProdutoServiceTest {
         assertThrows(RecursoNaoEncontradoException.class, () -> {
             produtoService.buscarPorId(1L);
         });
+    }
+
+    @Test
+    void salvarDeveChamarRepositoryComProdutoCorreto() {
+        Produto produtoFake = new Produto();
+        produtoFake.setIdProduto(1L);
+        produtoFake.setNomeProduto("Cerveja Teste");
+
+        produtoService.salvar(produtoFake);
+
+        verify(produtoRepository).save(produtoFake);
     }
 }
