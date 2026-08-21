@@ -1,6 +1,7 @@
 package com.geladaobebidas.app.services;
 
 import com.geladaobebidas.app.entities.MovimentacaoEstoque;
+import com.geladaobebidas.app.entities.Produto;
 import com.geladaobebidas.app.enums.TipoMovimentacao;
 import com.geladaobebidas.app.exceptions.RecursoNaoEncontradoException;
 import com.geladaobebidas.app.repositories.MovimentacaoEstoqueRepository;
@@ -9,6 +10,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -78,5 +80,21 @@ public class MovimetacaoEstoqueServiceTest {
         movimentacaoEstoqueService.excluir(id);
 
         verify(movimentacaoEstoqueRepository).deleteById(id);
+    }
+
+    private MovimentacaoEstoque criarMovimentacaoFake(Long id, TipoMovimentacao tipo, Integer quantidade) {
+        Produto produtoFake = new Produto();
+        produtoFake.setIdProduto(1L);
+        produtoFake.setNomeProduto("Cerveja Teste");
+
+        MovimentacaoEstoque movimentacaoFake = new MovimentacaoEstoque();
+        movimentacaoFake.setIdMovimentacao(id);
+        movimentacaoFake.setTipoMovimentacao(tipo);
+        movimentacaoFake.setQuantidadeMovimentacao(quantidade);
+        movimentacaoFake.setDataMovimentacao(LocalDateTime.of(2026, 8, 21, 14, 30));
+        movimentacaoFake.setMotivoMovimentacao("Teste");
+        movimentacaoFake.setProduto(produtoFake);
+
+        return movimentacaoFake;
     }
 }
