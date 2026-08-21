@@ -9,6 +9,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -54,5 +55,19 @@ public class MovimetacaoEstoqueServiceTest {
         movimentacaoEstoqueService.salvar(movimentacaoFake);
 
         verify(movimentacaoEstoqueRepository).save(movimentacaoFake);
+    }
+
+    @Test
+    void listarTodasDeveRetornarListaDeMovimentacoes() {
+        MovimentacaoEstoque movimentacaoFake = criarMovimentacaoFake(1L, TipoMovimentacao.ENTRADA, 10);
+        MovimentacaoEstoque outraMovimentacaoFake = criarMovimentacaoFake(2L, TipoMovimentacao.SAIDA, 3);
+
+        List<MovimentacaoEstoque> movimentacoesFake = List.of(movimentacaoFake, outraMovimentacaoFake);
+        when(movimentacaoEstoqueRepository.findAll()).thenReturn(movimentacoesFake);
+
+        List<MovimentacaoEstoque> resultado = movimentacaoEstoqueService.listarTodas();
+
+        assertEquals(2, resultado.size());
+        assertEquals(movimentacoesFake, resultado);
     }
 }
