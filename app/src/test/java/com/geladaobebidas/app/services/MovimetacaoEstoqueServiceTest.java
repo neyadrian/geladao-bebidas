@@ -13,6 +13,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -46,5 +47,12 @@ public class MovimetacaoEstoqueServiceTest {
         });
     }
 
-    
+    @Test
+    void salvarDeveChamarRepositoryComMovimentacaoCorreta() {
+        MovimentacaoEstoque movimentacaoFake = criarMovimentacaoFake(1L, TipoMovimentacao.SAIDA, 5);
+
+        movimentacaoEstoqueService.salvar(movimentacaoFake);
+
+        verify(movimentacaoEstoqueRepository).save(movimentacaoFake);
+    }
 }
