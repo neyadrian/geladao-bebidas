@@ -70,4 +70,13 @@ public class MovimetacaoEstoqueServiceTest {
         assertEquals(2, resultado.size());
         assertEquals(movimentacoesFake, resultado);
     }
+
+    @Test
+    void excluirDeveChamarRepositoryComIdCorreto() {
+        Long id = 1L;
+
+        movimentacaoEstoqueService.excluir(id);
+
+        verify(movimentacaoEstoqueRepository).deleteById(id);
+    }
 }
