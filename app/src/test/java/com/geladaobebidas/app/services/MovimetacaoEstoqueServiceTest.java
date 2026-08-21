@@ -1,9 +1,17 @@
 package com.geladaobebidas.app.services;
 
+import com.geladaobebidas.app.entities.MovimentacaoEstoque;
+import com.geladaobebidas.app.enums.TipoMovimentacao;
 import com.geladaobebidas.app.repositories.MovimentacaoEstoqueRepository;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class MovimetacaoEstoqueServiceTest {
@@ -13,4 +21,17 @@ public class MovimetacaoEstoqueServiceTest {
 
     @Mock
     private MovimentacaoEstoqueService movimentacaoEstoqueService;
+
+    @Test
+    void deveRetornarMovimentacaoQuandoEncontrada() {
+        MovimentacaoEstoque movimentacaoFake = criarMovimentacaoFake(1L, TipoMovimentacao.ENTRADA, 10);
+
+        when(movimentacaoEstoqueRepository.findById(1L)).thenReturn(Optional.of(movimentacaoFake));
+
+        MovimentacaoEstoque resultado = movimentacaoEstoqueService.buscarPorId(1L);
+
+        assertEquals(1L, resultado.getIdMovimentacao());
+        assertEquals(TipoMovimentacao.ENTRADA, resultado.getTipoMovimentacao());
+        assertEquals(10, resultado.getQuantidadeMovimentacao());
+    }
 }
