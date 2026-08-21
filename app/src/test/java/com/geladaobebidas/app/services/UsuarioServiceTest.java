@@ -61,7 +61,7 @@ class UsuarioServiceTest {
         usuarioFake.setNomeUsuario("Usuario Teste");
         usuarioFake.setSenha("senha123");
 
-        when(passwordEncoder.encode("senha124")).thenReturn("senhaCriptografada");
+        when(passwordEncoder.encode("senha123")).thenReturn("senhaCriptografada");
 
         usuarioService.salvar(usuarioFake);
 
