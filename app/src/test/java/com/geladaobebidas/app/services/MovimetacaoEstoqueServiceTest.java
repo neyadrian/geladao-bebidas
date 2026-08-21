@@ -2,6 +2,7 @@ package com.geladaobebidas.app.services;
 
 import com.geladaobebidas.app.entities.MovimentacaoEstoque;
 import com.geladaobebidas.app.enums.TipoMovimentacao;
+import com.geladaobebidas.app.exceptions.RecursoNaoEncontradoException;
 import com.geladaobebidas.app.repositories.MovimentacaoEstoqueRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,6 +12,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -34,4 +36,15 @@ public class MovimetacaoEstoqueServiceTest {
         assertEquals(TipoMovimentacao.ENTRADA, resultado.getTipoMovimentacao());
         assertEquals(10, resultado.getQuantidadeMovimentacao());
     }
+
+    @Test
+    void buscarPorIdQuandoNaoEncontrada() {
+        when(movimentacaoEstoqueRepository.findById(1L)).thenReturn(Optional.empty());
+
+        assertThrows(RecursoNaoEncontradoException.class, () -> {
+            movimentacaoEstoqueService.buscarPorId(1L);
+        });
+    }
+
+    
 }
