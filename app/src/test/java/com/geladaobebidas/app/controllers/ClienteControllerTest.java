@@ -2,6 +2,7 @@ package com.geladaobebidas.app.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.geladaobebidas.app.entities.Cliente;
+import com.geladaobebidas.app.security.JwtService;
 import com.geladaobebidas.app.services.ClienteService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.security.core.userdetails.UserDetailsService;
 
 import java.util.List;
 
@@ -28,6 +30,12 @@ public class ClienteControllerTest {
 
     @MockitoBean
     private ClienteService clienteService;
+
+    @MockitoBean
+    private JwtService jwtService;
+
+    @MockitoBean
+    private UserDetailsService userDetailsService;
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
