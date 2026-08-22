@@ -16,8 +16,7 @@ import tools.jackson.databind.ObjectMapper;
 import java.util.List;
 
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -80,5 +79,11 @@ public class ProdutoControllerTest {
         mockMvc.perform(get("/produtos"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(1));
+    }
+
+    @Test
+    void deveExcluirProdutoComSucesso() throws Exception {
+        mockMvc.perform(delete("/produtos/1"))
+                .andExpect(status().isNoContent());
     }
 }
