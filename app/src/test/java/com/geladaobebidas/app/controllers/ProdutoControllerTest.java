@@ -1,24 +1,24 @@
 package com.geladaobebidas.app.controllers;
 
-import ch.qos.logback.core.encoder.EchoEncoder;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.geladaobebidas.app.entities.Produto;
 import com.geladaobebidas.app.exceptions.RecursoNaoEncontradoException;
 import com.geladaobebidas.app.services.ProdutoService;
-import org.junit.jupiter.api.MediaType;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
-import tools.jackson.databind.ObjectMapper;
 
 import java.util.List;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(ProdutoController.class)
 @AutoConfigureMockMvc(addFilters = false)
@@ -30,14 +30,15 @@ public class ProdutoControllerTest {
     @MockitoBean
     private ProdutoService produtoService;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+    private ObjectMapper objectMapper = new ObjectMapper();
 
     @Test
     void deveCriarProdutoComSucesso() throws Exception {
         Produto produto = new Produto();
         produto.setIdProduto(1L);
         produto.setNomeProduto("Cerveja Teste");
+
+        doNothing().when(produtoService).salvar(any(Produto.class));
 
         mockMvc.perform(post("/produtos")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -83,6 +84,8 @@ public class ProdutoControllerTest {
 
     @Test
     void deveExcluirProdutoComSucesso() throws Exception {
+        doNothing().when(produtoService).excluir(1L);
+
         mockMvc.perform(delete("/produtos/1"))
                 .andExpect(status().isNoContent());
     }
