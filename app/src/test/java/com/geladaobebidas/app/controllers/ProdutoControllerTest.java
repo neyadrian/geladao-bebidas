@@ -13,6 +13,8 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import tools.jackson.databind.ObjectMapper;
 
+import java.util.List;
+
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -65,5 +67,18 @@ public class ProdutoControllerTest {
 
         mockMvc.perform(get("/produtos/99"))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void deveListarTodosOsProdutos() throws Exception {
+        Produto produto = new Produto();
+        produto.setIdProduto(1L);
+        produto.setNomeProduto("Cerveja Teste");
+
+        when(produtoService.listarTodos()).thenReturn(List.of(produto));
+
+        mockMvc.perform(get("/produtos"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(1));
     }
 }
