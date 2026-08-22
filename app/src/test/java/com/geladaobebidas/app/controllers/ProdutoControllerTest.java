@@ -2,6 +2,7 @@ package com.geladaobebidas.app.controllers;
 
 import ch.qos.logback.core.encoder.EchoEncoder;
 import com.geladaobebidas.app.entities.Produto;
+import com.geladaobebidas.app.exceptions.RecursoNaoEncontradoException;
 import com.geladaobebidas.app.services.ProdutoService;
 import org.junit.jupiter.api.MediaType;
 import org.junit.jupiter.api.Test;
@@ -55,5 +56,14 @@ public class ProdutoControllerTest {
         mockMvc.perform(get("/produtos/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.nomeProduto").value("Cerveja Teste"));
+    }
+
+    @Test
+    void deveRetornar404QuandoProdutoNaoExiste() throws Exception {
+        when(produtoService.buscarPorId(99L))
+                .thenThrow(new RecursoNaoEncontradoException("Produto não encontrado: 99"));
+
+        mockMvc.perform(get("/produtos/99"))
+                .andExpect(status().isNotFound());
     }
 }
