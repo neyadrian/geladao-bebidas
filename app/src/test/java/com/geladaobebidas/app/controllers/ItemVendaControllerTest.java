@@ -12,6 +12,8 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import tools.jackson.databind.ObjectMapper;
 
+import java.math.BigDecimal;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
@@ -62,5 +64,14 @@ public class ItemVendaControllerTest {
                 .andExpect(jsonPath("$.idItemVenda").value(1L))
                 .andExpect(jsonPath("$.quantidadeItem").value(2))
                 .andExpect(jsonPath("$.precoUnitarioItem").value(10.50));
+    }
+
+    private ItemVenda criarItemVenda(Long id, Integer quantidade, String precoUnitario) {
+        ItemVenda itemVenda = new ItemVenda();
+        itemVenda.setIdItemVenda(id);
+        itemVenda.setQuantidadeItem(quantidade);
+        itemVenda.setPrecoUnitarioItem(new BigDecimal(precoUnitario));
+
+        return itemVenda;
     }
 }
