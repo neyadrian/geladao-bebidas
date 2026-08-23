@@ -13,6 +13,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import tools.jackson.databind.ObjectMapper;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
@@ -65,6 +66,21 @@ public class ItemVendaControllerTest {
                 .andExpect(jsonPath("$.quantidadeItem").value(2))
                 .andExpect(jsonPath("$.precoUnitarioItem").value(10.50));
     }
+
+    @Test
+    void deveListarTodosOsItensVenda() throws Exception {
+        ItemVenda itemVenda = criarItemVenda(1L, 2, "10.50");
+
+        when(itemVendaService.listarTodos()).thenReturn(List.of(itemVenda));
+
+        mockMvc.perform(get("/itens-venda"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(1))
+                .andExpect(jsonPath("$[0].idItemVenda").value(1L))
+                .andExpect(jsonPath("$[0].quantidadeItem").value(2))
+                .andExpect(jsonPath("$[0].precoUnitarioItem").value(10.50));
+    }
+
 
     private ItemVenda criarItemVenda(Long id, Integer quantidade, String precoUnitario) {
         ItemVenda itemVenda = new ItemVenda();
