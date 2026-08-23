@@ -1,5 +1,6 @@
 package com.geladaobebidas.app.controllers;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.geladaobebidas.app.entities.ItemVenda;
 import com.geladaobebidas.app.security.JwtService;
 import com.geladaobebidas.app.services.ItemVendaService;
@@ -8,9 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
-import tools.jackson.databind.ObjectMapper;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -18,11 +19,8 @@ import java.util.List;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
-import static org.springframework.http.RequestEntity.post;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.jsonPath;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(ItemVendaController.class)
 @AutoConfigureMockMvc(addFilters = false)
@@ -36,6 +34,9 @@ public class ItemVendaControllerTest {
 
     @MockitoBean
     private JwtService jwtService;
+
+    @MockitoBean
+    private UserDetailsService userDetailsService;
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
@@ -52,7 +53,6 @@ public class ItemVendaControllerTest {
                 .andExpect(jsonPath("$.idItemVenda").value(1L))
                 .andExpect(jsonPath("$.quantidadeItem").value(2))
                 .andExpect(jsonPath("$.precoUnitarioItem").value(10.50));
-
     }
 
     @Test
