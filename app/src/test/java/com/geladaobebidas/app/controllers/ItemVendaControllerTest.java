@@ -20,6 +20,7 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.RequestEntity.post;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.jsonPath;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -81,6 +82,13 @@ public class ItemVendaControllerTest {
                 .andExpect(jsonPath("$[0].precoUnitarioItem").value(10.50));
     }
 
+    @Test
+    void deveExcluirItemVendaComSucesso() throws Exception {
+        doNothing().when(itemVendaService).excluir(1L);
+
+        mockMvc.perform(delete("/itens-venda/1"))
+                .andExpect(status().isNoContent());
+    }
 
     private ItemVenda criarItemVenda(Long id, Integer quantidade, String precoUnitario) {
         ItemVenda itemVenda = new ItemVenda();
