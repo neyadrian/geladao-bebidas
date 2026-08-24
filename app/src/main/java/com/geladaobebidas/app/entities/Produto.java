@@ -53,7 +53,7 @@ public class Produto {
         }
         return quantidadeProduto <= estoqueMinimo;
     }
-    
+
     public BigDecimal getLucroUnitario() {
         if (precoProduto == null || precoCusto == null) {
             return BigDecimal.ZERO;
