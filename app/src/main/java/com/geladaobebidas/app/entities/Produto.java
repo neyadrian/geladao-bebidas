@@ -23,8 +23,14 @@ public class Produto {
     @Column(name = "preco_produto")
     private BigDecimal precoProduto;
 
+    @Column(name = "preco_custo")
+    private BigDecimal precoCusto;
+
     @Column(name = "quantidade_produto")
     private Integer quantidadeProduto;
+
+    @Column(name = "estoque_minimo")
+    private Integer estoqueMinimo;
 
     @Enumerated(EnumType.ORDINAL)
     @Column(name = "categoria_produto")
