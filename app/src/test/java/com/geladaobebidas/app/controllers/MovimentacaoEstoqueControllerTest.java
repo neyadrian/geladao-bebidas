@@ -1,43 +1,50 @@
 package com.geladaobebidas.app.controllers;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.geladaobebidas.app.entities.MovimentacaoEstoque;
 import com.geladaobebidas.app.services.MovimentacaoEstoqueService;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.http.MediaType;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.web.servlet.MockMvc;
+
 
 import java.util.List;
 
-@RestController
-@RequestMapping("/movimentacao-estoque")
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+@WebMvcTest(MovimentacaoEstoqueController.class)
 public class MovimentacaoEstoqueControllerTest {
 
-    private final MovimentacaoEstoqueService  movimentacaoEstoqueService;
+    @Autowired
+    private MockMvc mockMvc;
 
-    public MovimentacaoEstoqueControllerTest(MovimentacaoEstoqueService movimentacaoEstoqueService) {
-        this.movimentacaoEstoqueService = movimentacaoEstoqueService;
+    @MockitoBean
+    private MovimentacaoEstoqueService movimentacaoEstoqueService;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @Test
+    @DisplayName("Deve salvar uma movimentação de estoque e retornar status 201 Created")
+    public void deveSalvarMovimentacaoEstoque() throws Exception {
+        MovimentacaoEstoque movimentacaoEstoque = new MovimentacaoEstoque();
+
+        when(movimentacaoEstoqueService.salvar(any(MovimentacaoEstoque.class))).thenReturn(movimentacaoEstoque);
+
+        mockMvc.perform(post("/movimentacao-estoque")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(movimentacaoEstoque)))
+                .andExpect(status().isCreated());
     }
 
-    @PostMapping
-    public ResponseEntity<MovimentacaoEstoque> salvar(@RequestBody MovimentacaoEstoque movimentacaoEstoque) {
-        movimentacaoEstoqueService.salvar(movimentacaoEstoque);
-        return  ResponseEntity.status(HttpStatus.CREATED).body(movimentacaoEstoque);
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<MovimentacaoEstoque> buscarPorId(@PathVariable Long id) {
-        return ResponseEntity.ok().body(movimentacaoEstoqueService.buscarPorId(id));
-    }
-
-    @GetMapping
-    public ResponseEntity<List<MovimentacaoEstoque>> listarTodas() {
-        List<MovimentacaoEstoque> movimentacaoEstoque = movimentacaoEstoqueService.listarTodas();
-        return ResponseEntity.ok().body(movimentacaoEstoque);
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> excluir(@PathVariable Long id) {
-        movimentacaoEstoqueService.excluir(id);
-        return ResponseEntity.noContent().build();
-    }
+    
 }
