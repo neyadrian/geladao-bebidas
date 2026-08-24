@@ -46,4 +46,18 @@ public class Produto {
     @Enumerated(EnumType.STRING)
     @Column(name = "tipo_embalagem_produto")
     private TipoEmbalagem tipoEmbalagemProduto;
+
+    public boolean isEstoqueBaixo() {
+        if (quantidadeProduto == null || estoqueMinimo == null) {
+            return false;
+        }
+        return quantidadeProduto <= estoqueMinimo;
+    }
+    
+    public BigDecimal getLucroUnitario() {
+        if (precoProduto == null || precoCusto == null) {
+            return BigDecimal.ZERO;
+        }
+        return precoProduto.subtract(precoCusto);
+    }
 }
