@@ -10,4 +10,5 @@ public class RegistrarVendaRequest {
     private Long clienteId;
     private Long usuarioId;
     private List<ItemVendaRequest> itens;
+    private String formaPagamento;
 }
