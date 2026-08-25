@@ -75,4 +75,16 @@ public class VendaController {
                 .header("Content-Disposition", "inline; filename=relatorio-" + mes + "-" + ano + ".pdf")
                 .body(pdf);
     }
+
+    @GetMapping("/fiados/cliente/{clienteId}")
+    public ResponseEntity<List<Venda>> listarFiadosPorCliente(@PathVariable Long clienteId) {
+        List<Venda> fiados = vendaService.listarFiadosPorCliente(clienteId);
+        return ResponseEntity.ok(fiados);
+    }
+
+    @PutMapping("/{id}/pagar-fiado")
+    public ResponseEntity<Venda> pagarFiado(@PathVariable Long id) {
+        Venda vendaPaga = vendaService.pagarFiado(id);
+        return ResponseEntity.ok(vendaPaga);
+    }
 }
