@@ -27,9 +27,11 @@ public class VendaController {
 
     @PostMapping
     public ResponseEntity<Venda> registrarVenda(@RequestBody RegistrarVendaRequest request) {
+
         Venda venda = vendaService.registrarVenda(
                 request.getClienteId(),
                 request.getUsuarioId(),
+                request.getFormaPagamento(),
                 request.getItens()
         );
         return ResponseEntity.status(HttpStatus.CREATED).body(venda);
