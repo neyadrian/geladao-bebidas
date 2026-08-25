@@ -48,21 +48,20 @@ public class VendaService {
         venda.setUsuario(usuario);
         venda.setDataVenda(LocalDateTime.now());
 
-        // NOVO: Preparando a venda para o Fiado
         venda.setFormaPagamento(formaPagamento);
         if ("FIADO".equalsIgnoreCase(formaPagamento)) {
-            venda.setStatusPagamento("PENDENTE"); // O cliente está devendo
+            venda.setStatusPagamento("PENDENTE");
         } else {
             venda.setStatusPagamento("PAGO");
         }
         venda.setValorTotalVenda(BigDecimal.ZERO);
-        // venda.setValorTotalLucro(BigDecimal.ZERO); // Descomente quando adicionar esse campo na entidade
+
         vendaRepository.save(venda);
         BigDecimal valorTotal = BigDecimal.ZERO;
-        BigDecimal lucroTotal = BigDecimal.ZERO; // Acumulador de lucro
+        BigDecimal lucroTotal = BigDecimal.ZERO;
         for (ItemVendaRequest itemDesejado : itensDesejados) {
             Produto produto = produtoService.buscarPorId(itemDesejado.getProdutoId());
-            // REGRA 1: Travar venda sem estoque
+
             if (produto.getQuantidadeProduto() < itemDesejado.getQuantidade()) {
                 throw new RuntimeException("Estoque insuficiente para a bebida: " + produto.getNomeProduto());
             }
@@ -72,25 +71,19 @@ public class VendaService {
             itemVenda.setQuantidadeItem(itemDesejado.getQuantidade());
             itemVenda.setPrecoUnitarioItem(produto.getPrecoProduto());
             itemVendaService.salvar(itemVenda);
-            // REGRA 2: Cálculo do lucro (Preço Venda - Preço Custo) * Qtd
             BigDecimal precoCusto = produto.getPrecoCusto() != null ? produto.getPrecoCusto() : BigDecimal.ZERO;
             BigDecimal lucroUnitario = produto.getPrecoProduto().subtract(precoCusto);
             BigDecimal lucroDesteItem = lucroUnitario.multiply(BigDecimal.valueOf(itemDesejado.getQuantidade()));
             lucroTotal = lucroTotal.add(lucroDesteItem); // Soma no lucro da venda
             BigDecimal subtotal = produto.getPrecoProduto().multiply(BigDecimal.valueOf(itemDesejado.getQuantidade()));
             valorTotal = valorTotal.add(subtotal);
-            // Atualiza o Estoque
             produto.setQuantidadeProduto(produto.getQuantidadeProduto() - itemDesejado.getQuantidade());
 
-            // REGRA 3: Alerta de Estoque Baixo
             if (produto.isEstoqueBaixo()) {
-                // Aqui podemos futuramente salvar numa tabela "Alerta" no banco de dados.
-                // Por enquanto vai printar no console do servidor:
                 System.out.println("⚠️ ALERTA: A bebida " + produto.getNomeProduto() + " atingiu o estoque mínimo de reposição!");
             }
 
             produtoService.salvar(produto);
-            // Salva Movimentação
             MovimentacaoEstoque movimentacao = new MovimentacaoEstoque();
             movimentacao.setProduto(produto);
             movimentacao.setTipoMovimentacao(TipoMovimentacao.SAIDA);
@@ -101,8 +94,6 @@ public class VendaService {
         }
         venda.setValorTotalVenda(valorTotal);
 
-        // NOVO: Salvando o lucro na venda para gerar relatórios depois
-        // venda.setValorTotalLucro(lucroTotal);
         vendaRepository.save(venda);
         return venda;
     }
@@ -146,5 +137,22 @@ public class VendaService {
                 .stream()
                 .max(Map.Entry.comparingByValue())
                 .orElse(null);
+    }
+
+    public List<Venda> listarFiadosPorCliente(Long clienteId) {
+        Cliente cliente = clienteService.buscarPorId(clienteId);
+        return vendaRepository.findByClienteAndStatusPagamento(cliente, "PENDENTE");
+    }
+
+    @Transactional
+    public Venda pagarFiado(Long idVenda) {
+        Venda venda = buscarPorId(idVenda);
+
+        if (!"PENDENTE".equals(venda.getStatusPagamento())) {
+            throw new RuntimeException("Esta venda já consta como PAGA!");
+        }
+
+        venda.setStatusPagamento("PAGO");
+        return vendaRepository.save(venda);
     }
 }
