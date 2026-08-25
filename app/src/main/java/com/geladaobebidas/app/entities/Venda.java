@@ -21,6 +21,15 @@ public class Venda {
     @Column(name = "valor_total_venda")
     private BigDecimal valorTotalVenda;
 
+    @Column(name = "valor_total_lucro")
+    private BigDecimal valorTotalLucro;
+
+    @Column(name = "forma_pagamento")
+    private String formaPagamento;
+
+    @Column(name = "status_pagamento")
+    private String statusPagamento;
+
     @ManyToOne
     @JoinColumn(name = "id_cliente", nullable = false)
     private Cliente cliente;
