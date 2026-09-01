@@ -72,6 +72,15 @@ public class NotaVendaGenerator {
         document.add(tabela);
 
         document.add(new Paragraph(" "));
+        
+        document.add(new Paragraph("Forma de Pagamento: " + venda.getFormaPagamento() + " (" + venda.getStatusPagamento() + ")"));
+
+        if (venda.getValorDesconto() != null && venda.getValorDesconto().compareTo(BigDecimal.ZERO) > 0) {
+            BigDecimal subtotalSemDesconto = venda.getValorTotalVenda().add(venda.getValorDesconto());
+            document.add(new Paragraph("Subtotal: R$ " + subtotalSemDesconto));
+            document.add(new Paragraph("Desconto (" + venda.getPercentualDesconto() + "%): - R$ " + venda.getValorDesconto()));
+        }
+
         Font totalFont = new Font(Font.HELVETICA, 14, Font.BOLD);
         Paragraph total = new Paragraph("Valor Total: R$ " + venda.getValorTotalVenda(), totalFont);
         document.add(total);
