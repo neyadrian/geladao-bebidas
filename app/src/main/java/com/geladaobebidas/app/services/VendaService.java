@@ -60,6 +60,9 @@ public class VendaService {
         // Setup discount values
         BigDecimal pctDesconto = request.getPercentualDesconto() != null ? request.getPercentualDesconto() : BigDecimal.ZERO;
         venda.setPercentualDesconto(pctDesconto);
+        venda.setValorTotalVenda(BigDecimal.ZERO);
+        venda.setValorTotalLucro(BigDecimal.ZERO);
+        venda.setValorDesconto(BigDecimal.ZERO);
 
         vendaRepository.save(venda);
         BigDecimal valorTotal = BigDecimal.ZERO;
