@@ -16,7 +16,9 @@ import Pagination, { usePagination } from "./Pagination.jsx";
 const emptyForm = {
   nomeProduto: "",
   precoProduto: "",
+  precoCusto: "",
   quantidadeProduto: "",
+  estoqueMinimo: "",
   categoriaProduto: "CERVEJA",
   volumeProduto: "",
   unidadeVolumeProduto: "ML",
@@ -60,8 +62,10 @@ export default function ProductsPage({ auth }) {
     setEditingId(produto.idProduto);
     setForm({
       nomeProduto: produto.nomeProduto,
-      precoProduto: String(produto.precoProduto),
-      quantidadeProduto: String(produto.quantidadeProduto),
+      precoProduto: String(produto.precoProduto || ""),
+      precoCusto: String(produto.precoCusto || ""),
+      quantidadeProduto: String(produto.quantidadeProduto || ""),
+      estoqueMinimo: String(produto.estoqueMinimo || ""),
       categoriaProduto: produto.categoriaProduto,
       volumeProduto: String(produto.volumeProduto),
       unidadeVolumeProduto: produto.unidadeVolumeProduto,
@@ -83,7 +87,9 @@ export default function ProductsPage({ auth }) {
     const payload = {
       nomeProduto: form.nomeProduto.trim(),
       precoProduto: parseFloat(form.precoProduto),
+      precoCusto: parseFloat(form.precoCusto) || 0,
       quantidadeProduto: parseInt(form.quantidadeProduto, 10),
+      estoqueMinimo: parseInt(form.estoqueMinimo, 10) || 0,
       categoriaProduto: form.categoriaProduto,
       volumeProduto: parseInt(form.volumeProduto, 10),
       unidadeVolumeProduto: form.unidadeVolumeProduto,
@@ -180,7 +186,7 @@ export default function ProductsPage({ auth }) {
               </select>
             </div>
             <div className="field">
-              <label htmlFor="precoProduto">Preço (R$)</label>
+              <label htmlFor="precoProduto">Preço de Venda (R$)</label>
               <input
                 id="precoProduto"
                 required
@@ -193,7 +199,20 @@ export default function ProductsPage({ auth }) {
               />
             </div>
             <div className="field">
-              <label htmlFor="quantidadeProduto">Qtd. em estoque</label>
+              <label htmlFor="precoCusto">Preço de Custo (R$)</label>
+              <input
+                id="precoCusto"
+                required
+                type="number"
+                min="0"
+                step="0.01"
+                value={form.precoCusto}
+                onChange={(e) => updateField("precoCusto", e.target.value)}
+                placeholder="4,00"
+              />
+            </div>
+            <div className="field">
+              <label htmlFor="quantidadeProduto">Qtd. atual</label>
               <input
                 id="quantidadeProduto"
                 required
@@ -203,6 +222,19 @@ export default function ProductsPage({ auth }) {
                 value={form.quantidadeProduto}
                 onChange={(e) => updateField("quantidadeProduto", e.target.value)}
                 placeholder="50"
+              />
+            </div>
+            <div className="field">
+              <label htmlFor="estoqueMinimo">Estoque mín.</label>
+              <input
+                id="estoqueMinimo"
+                required
+                type="number"
+                min="0"
+                step="1"
+                value={form.estoqueMinimo}
+                onChange={(e) => updateField("estoqueMinimo", e.target.value)}
+                placeholder="10"
               />
             </div>
             <div className="field">

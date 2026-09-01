@@ -30,6 +30,12 @@ public class Venda {
     @Column(name = "status_pagamento")
     private String statusPagamento;
 
+    @Column(name = "percentual_desconto")
+    private BigDecimal percentualDesconto;
+
+    @Column(name = "valor_desconto")
+    private BigDecimal valorDesconto;
+
     @ManyToOne
     @JoinColumn(name = "id_cliente", nullable = false)
     private Cliente cliente;

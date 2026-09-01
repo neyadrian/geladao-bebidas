@@ -40,9 +40,11 @@ public class VendaService {
     }
 
     @Transactional
-    public Venda registrarVenda(Long clienteId, Long usuarioId, String formaPagamento, List<ItemVendaRequest> itensDesejados) {
-        Cliente cliente = clienteService.buscarPorId(clienteId);
-        Usuario usuario = usuarioService.buscarPorId(usuarioId);
+    public Venda registrarVenda(com.geladaobebidas.app.dto.RegistrarVendaRequest request) {
+        Cliente cliente = clienteService.buscarPorId(request.getClienteId());
+        Usuario usuario = usuarioService.buscarPorId(request.getUsuarioId());
+        String formaPagamento = request.getFormaPagamento();
+        
         Venda venda = new Venda();
         venda.setCliente(cliente);
         venda.setUsuario(usuario);
@@ -54,12 +56,15 @@ public class VendaService {
         } else {
             venda.setStatusPagamento("PAGO");
         }
-        venda.setValorTotalVenda(BigDecimal.ZERO);
+        
+        // Setup discount values
+        BigDecimal pctDesconto = request.getPercentualDesconto() != null ? request.getPercentualDesconto() : BigDecimal.ZERO;
+        venda.setPercentualDesconto(pctDesconto);
 
         vendaRepository.save(venda);
         BigDecimal valorTotal = BigDecimal.ZERO;
         BigDecimal lucroTotal = BigDecimal.ZERO;
-        for (ItemVendaRequest itemDesejado : itensDesejados) {
+        for (ItemVendaRequest itemDesejado : request.getItens()) {
             Produto produto = produtoService.buscarPorId(itemDesejado.getProdutoId());
 
             if (produto.getQuantidadeProduto() < itemDesejado.getQuantidade()) {
@@ -92,7 +97,19 @@ public class VendaService {
             movimentacao.setMotivoMovimentacao("Venda #" + venda.getIdVenda() + (formaPagamento.equals("FIADO") ? " (FIADO)" : ""));
             movimentacaoEstoqueService.salvar(movimentacao);
         }
+        
+        // Aplicar Desconto
+        BigDecimal valorDesconto = BigDecimal.ZERO;
+        if (venda.getPercentualDesconto().compareTo(BigDecimal.ZERO) > 0) {
+            BigDecimal divisor = new BigDecimal("100");
+            valorDesconto = valorTotal.multiply(venda.getPercentualDesconto()).divide(divisor, 2, java.math.RoundingMode.HALF_UP);
+            valorTotal = valorTotal.subtract(valorDesconto);
+            lucroTotal = lucroTotal.subtract(valorDesconto);
+        }
+        
+        venda.setValorDesconto(valorDesconto);
         venda.setValorTotalVenda(valorTotal);
+        venda.setValorTotalLucro(lucroTotal);
 
         vendaRepository.save(venda);
         return venda;

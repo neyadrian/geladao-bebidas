@@ -20,6 +20,7 @@ export default function SalesPage({ auth }) {
   const [clienteId, setClienteId] = useState("");
   const [usuarioId, setUsuarioId] = useState("");
   const [formaPagamento, setFormaPagamento] = useState("DINHEIRO");
+  const [percentualDesconto, setPercentualDesconto] = useState("");
   const [itens, setItens] = useState([newItem()]);
   const [saving, setSaving] = useState(false);
   const [downloadingId, setDownloadingId] = useState(null);
@@ -64,12 +65,17 @@ export default function SalesPage({ auth }) {
   }
 
   function estimatedTotal() {
-    return itens.reduce((sum, it) => {
+    let sum = itens.reduce((acc, it) => {
       const produto = produtos.find((p) => String(p.idProduto) === String(it.produtoId));
       const qty = parseInt(it.quantidade, 10) || 0;
-      if (!produto) return sum;
-      return sum + produto.precoProduto * qty;
+      if (!produto) return acc;
+      return acc + produto.precoProduto * qty;
     }, 0);
+    const desc = parseFloat(percentualDesconto) || 0;
+    if (desc > 0) {
+      sum = sum - (sum * desc / 100);
+    }
+    return sum;
   }
 
   async function handleSubmit(e) {
@@ -92,10 +98,17 @@ export default function SalesPage({ auth }) {
 
     setSaving(true);
     try {
-      await apiSend("POST", "/vendas", auth, { clienteId: parseInt(clienteId, 10), usuarioId: parseInt(usuarioId, 10), formaPagamento, itens: validItens });
+      await apiSend("POST", "/vendas", auth, { 
+        clienteId: parseInt(clienteId, 10), 
+        usuarioId: parseInt(usuarioId, 10), 
+        formaPagamento, 
+        percentualDesconto: parseFloat(percentualDesconto) || 0,
+        itens: validItens 
+      });
       setOk("Venda registrada com sucesso.");
       setClienteId("");
       setFormaPagamento("DINHEIRO");
+      setPercentualDesconto("");
       setItens([newItem()]);
       await load();
     } catch (err) {
@@ -176,6 +189,19 @@ export default function SalesPage({ auth }) {
                 <option value="CARTAO">Cartão</option>
                 <option value="FIADO">Fiado</option>
               </select>
+            </div>
+            <div className="field">
+              <label htmlFor="percentualDesconto">Desconto (%)</label>
+              <input
+                id="percentualDesconto"
+                type="number"
+                min="0"
+                max="100"
+                step="0.1"
+                value={percentualDesconto}
+                onChange={(e) => setPercentualDesconto(e.target.value)}
+                placeholder="0"
+              />
             </div>
           </div>
 

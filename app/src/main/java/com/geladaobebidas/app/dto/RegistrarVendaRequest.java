@@ -11,4 +11,5 @@ public class RegistrarVendaRequest {
     private Long usuarioId;
     private List<ItemVendaRequest> itens;
     private String formaPagamento;
+    private java.math.BigDecimal percentualDesconto;
 }
