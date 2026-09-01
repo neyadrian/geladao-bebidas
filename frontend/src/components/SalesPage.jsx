@@ -19,6 +19,7 @@ export default function SalesPage({ auth }) {
 
   const [clienteId, setClienteId] = useState("");
   const [usuarioId, setUsuarioId] = useState("");
+  const [formaPagamento, setFormaPagamento] = useState("DINHEIRO");
   const [itens, setItens] = useState([newItem()]);
   const [saving, setSaving] = useState(false);
   const [downloadingId, setDownloadingId] = useState(null);
@@ -91,9 +92,10 @@ export default function SalesPage({ auth }) {
 
     setSaving(true);
     try {
-      await apiSend("POST", "/vendas", auth, { clienteId: parseInt(clienteId, 10), usuarioId: parseInt(usuarioId, 10), itens: validItens });
+      await apiSend("POST", "/vendas", auth, { clienteId: parseInt(clienteId, 10), usuarioId: parseInt(usuarioId, 10), formaPagamento, itens: validItens });
       setOk("Venda registrada com sucesso.");
       setClienteId("");
+      setFormaPagamento("DINHEIRO");
       setItens([newItem()]);
       await load();
     } catch (err) {
@@ -112,6 +114,18 @@ export default function SalesPage({ auth }) {
       setError(err instanceof ApiError ? err.message : "Não foi possível gerar a nota.");
     } finally {
       setDownloadingId(null);
+    }
+  }
+
+  async function handlePayFiado(id) {
+    if (!window.confirm("Confirmar o pagamento deste fiado?")) return;
+    setError("");
+    try {
+      await apiSend("PUT", `/vendas/${id}/pagar-fiado`, auth);
+      setOk("Pagamento registrado com sucesso!");
+      await load();
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : "Não foi possível registrar o pagamento.");
     }
   }
 
@@ -152,6 +166,15 @@ export default function SalesPage({ auth }) {
                     {u.nomeUsuario}
                   </option>
                 ))}
+              </select>
+            </div>
+            <div className="field">
+              <label htmlFor="formaPagamento">Pagamento</label>
+              <select id="formaPagamento" value={formaPagamento} onChange={(e) => setFormaPagamento(e.target.value)}>
+                <option value="DINHEIRO">Dinheiro</option>
+                <option value="PIX">Pix</option>
+                <option value="CARTAO">Cartão</option>
+                <option value="FIADO">Fiado</option>
               </select>
             </div>
           </div>
@@ -230,6 +253,8 @@ export default function SalesPage({ auth }) {
                         <th>Cliente</th>
                         <th>Data</th>
                         <th>Total</th>
+                        <th>Pagamento</th>
+                        <th>Status</th>
                         <th></th>
                       </tr>
                     </thead>
@@ -241,13 +266,33 @@ export default function SalesPage({ auth }) {
                           <td>{formatDate(v.dataVenda)}</td>
                           <td className="numeric">{formatBRL(v.valorTotalVenda)}</td>
                           <td>
-                            <button
-                              className="btn btn-gold btn-sm"
-                              onClick={() => handleNota(v.idVenda)}
-                              disabled={downloadingId === v.idVenda}
-                            >
-                              {downloadingId === v.idVenda ? "Gerando…" : "Baixar nota"}
-                            </button>
+                            {v.formaPagamento === "FIADO" ? <span className="badge badge-warning">Fiado</span> : <span className="badge badge-default">{v.formaPagamento || "—"}</span>}
+                          </td>
+                          <td>
+                            {v.statusPagamento === "PENDENTE" ? (
+                              <span style={{ color: "var(--red-600)", fontWeight: 600 }}>Pendente</span>
+                            ) : (
+                              <span style={{ color: "var(--green-600)", fontWeight: 600 }}>Pago</span>
+                            )}
+                          </td>
+                          <td>
+                            <div className="row-actions">
+                              {v.statusPagamento === "PENDENTE" && (
+                                <button
+                                  className="btn btn-primary btn-sm"
+                                  onClick={() => handlePayFiado(v.idVenda)}
+                                >
+                                  Pagar
+                                </button>
+                              )}
+                              <button
+                                className="btn btn-gold btn-sm"
+                                onClick={() => handleNota(v.idVenda)}
+                                disabled={downloadingId === v.idVenda}
+                              >
+                                {downloadingId === v.idVenda ? "Gerando…" : "Baixar nota"}
+                              </button>
+                            </div>
                           </td>
                         </tr>
                       ))}

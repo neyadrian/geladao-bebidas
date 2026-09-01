@@ -364,6 +364,28 @@ tbody tr:hover {
   font-family: var(--font-mono);
 }
 
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 100px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-family: var(--font-mono);
+}
+
+.badge-default {
+  background: var(--cream-100);
+  color: var(--ink-700);
+}
+
+.badge-warning {
+  background: #fdf3c6;
+  color: #a47600;
+}
+
 .empty-state {
   text-align: center;
   padding: 56px 24px;
