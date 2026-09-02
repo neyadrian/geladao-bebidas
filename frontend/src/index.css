@@ -97,13 +97,13 @@ h3 {
 
 .app-shell {
   display: grid;
-  grid-template-columns: 260px 1fr;
+  grid-template-columns: 260px minmax(0, 1fr);
   min-height: 100vh;
 }
 
 @media (max-width: 860px) {
   .app-shell {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 
@@ -111,6 +111,7 @@ h3 {
   padding: 36px 40px 60px;
   max-width: 980px;
   width: 100%;
+  min-width: 0;
 }
 
 @media (max-width: 860px) {
@@ -572,6 +573,12 @@ tbody tr:hover {
   color: var(--ink-900);
   width: 180px;
   padding: 0;
+}
+
+@media (max-width: 640px) {
+  .search-box input {
+    width: 130px;
+  }
 }
 
 .search-box input::placeholder {
