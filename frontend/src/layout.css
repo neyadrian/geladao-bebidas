@@ -21,6 +21,9 @@
   box-shadow: inset -3px 0 0 rgba(232, 168, 59, 0.15);
 }
 
+.mobile-header {
+  display: none;
+}
 .hamburger-btn {
   display: none;
 }
@@ -29,20 +32,45 @@
 }
 
 @media (max-width: 860px) {
+  .mobile-header {
+    display: flex;
+    align-items: center;
+    background: var(--wood-950);
+    padding: 12px 16px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+    border-bottom: 2px solid var(--gold-500);
+  }
+
   .hamburger-btn {
     display: block;
-    position: fixed;
-    top: 16px;
-    left: 16px;
-    z-index: 1000;
-    background: var(--wood-950);
+    background: transparent;
     color: var(--gold-500);
     border: none;
-    padding: 8px 16px;
-    border-radius: var(--radius-sm);
-    font-weight: bold;
-    font-size: 16px;
-    box-shadow: var(--shadow-card);
+    font-size: 24px;
+    padding: 4px;
+    cursor: pointer;
+  }
+
+  .mobile-logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: 16px;
+    color: var(--gold-300);
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 19px;
+  }
+
+  .mobile-logo img {
+    height: 32px;
+    width: 32px;
+    object-fit: contain;
   }
 
   .sidebar {
