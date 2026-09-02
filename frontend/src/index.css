@@ -113,9 +113,9 @@ h3 {
   width: 100%;
 }
 
-@media (max-width: 640px) {
+@media (max-width: 860px) {
   .main {
-    padding: 24px 18px 48px;
+    padding: 72px 18px 48px; /* space for hamburger */
   }
 }
 
@@ -161,6 +161,12 @@ h3 {
 
 .card-pad {
   padding: 24px;
+}
+
+@media (max-width: 640px) {
+  .card-pad {
+    padding: 16px;
+  }
 }
 
 .card-head {
@@ -344,6 +350,15 @@ tbody td {
   border-bottom: 1px solid var(--line);
   color: var(--ink-900);
   vertical-align: middle;
+}
+
+@media (max-width: 640px) {
+  thead th {
+    padding: 10px 12px;
+  }
+  tbody td {
+    padding: 12px 12px;
+  }
 }
 
 tbody tr:last-child td {

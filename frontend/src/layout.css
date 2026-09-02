@@ -21,54 +21,69 @@
   box-shadow: inset -3px 0 0 rgba(232, 168, 59, 0.15);
 }
 
+.hamburger-btn {
+  display: none;
+}
+.close-btn {
+  display: none;
+}
+
 @media (max-width: 860px) {
+  .hamburger-btn {
+    display: block;
+    position: fixed;
+    top: 16px;
+    left: 16px;
+    z-index: 1000;
+    background: var(--wood-950);
+    color: var(--gold-500);
+    border: none;
+    padding: 8px 16px;
+    border-radius: var(--radius-sm);
+    font-weight: bold;
+    font-size: 16px;
+    box-shadow: var(--shadow-card);
+  }
+
   .sidebar {
-    position: static;
-    height: auto;
-    border-right: none;
-    border-bottom: 6px solid var(--wood-950);
-    padding: 16px;
+    position: fixed;
+    top: 0;
+    left: -300px;
+    width: 280px;
+    height: 100vh;
+    z-index: 1001;
+    transition: left 0.3s ease;
+    border-right: 2px solid var(--gold-500);
+  }
+
+  .sidebar.open {
+    left: 0;
   }
 
   .sidebar-brand {
-    margin-bottom: 12px;
-    padding-bottom: 12px;
-  }
-
-  .nav-list {
-    flex-direction: row;
-    overflow-x: auto;
-    gap: 8px;
-    padding-bottom: 8px;
-    -ms-overflow-style: none; /* IE and Edge */
-    scrollbar-width: none; /* Firefox */
-  }
-  
-  .nav-list::-webkit-scrollbar {
-    display: none; /* Chrome, Safari and Opera */
-  }
-
-  .nav-item {
-    width: auto;
-    white-space: nowrap;
-    padding: 8px 12px;
-  }
-
-  .sidebar-footer {
-    display: flex;
     justify-content: space-between;
-    align-items: center;
-    border-top: none;
-    padding-top: 0;
-    margin-top: 12px;
   }
 
-  .sidebar-user {
-    margin-bottom: 0;
+  .close-btn {
+    display: block;
+    background: transparent;
+    border: none;
+    color: var(--gold-500);
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    padding: 8px;
   }
 
-  .logout-btn {
-    width: auto;
+  .sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    backdrop-filter: blur(2px);
   }
 }
 
@@ -234,6 +249,12 @@
   box-shadow: var(--shadow-pop);
   padding: 38px 34px 32px;
   text-align: center;
+}
+
+@media (max-width: 640px) {
+  .login-card {
+    padding: 32px 24px 24px;
+  }
 }
 
 .login-card img {
