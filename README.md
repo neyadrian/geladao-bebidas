@@ -84,4 +84,4 @@ npm run dev
 Acesse a interface gráfica através do link gerado pelo Vite (geralmente `http://localhost:5173`).
 
 ---
-Desenvolvido como projeto prático para Portfólio de Back-End. 👨‍💻
+Desenvolvido por Ney Adrian como projeto prático para Portfólio de Back-End. 👨‍💻
