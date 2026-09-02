@@ -56,7 +56,7 @@ public class VendaControllerTest {
         RegistrarVendaRequest request = criarRegistrarVendaRequest();
         Venda venda = criarVenda(1L);
 
-        when(vendaService.registrarVenda(1L, 2L, request.getItens())).thenReturn(venda);
+        when(vendaService.registrarVenda(org.mockito.ArgumentMatchers.any(RegistrarVendaRequest.class))).thenReturn(venda);
 
         mockMvc.perform(post("/vendas")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -65,7 +65,7 @@ public class VendaControllerTest {
                 .andExpect(jsonPath("$.idVenda").value(1L))
                 .andExpect(jsonPath("$.valorTotalVenda").value(50.00));
 
-        verify(vendaService).registrarVenda(1L, 2L, request.getItens());
+        verify(vendaService).registrarVenda(org.mockito.ArgumentMatchers.any(RegistrarVendaRequest.class));
     }
 
     @Test

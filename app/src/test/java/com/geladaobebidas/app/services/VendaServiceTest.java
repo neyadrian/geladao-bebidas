@@ -73,7 +73,13 @@ class VendaServiceTest {
         List<ItemVendaRequest> itens = new ArrayList<>();
         itens.add(itemRequest);
 
-        Venda vendaResultado = vendaService.registrarVenda(1L, 1L, itens);
+        com.geladaobebidas.app.dto.RegistrarVendaRequest request = new com.geladaobebidas.app.dto.RegistrarVendaRequest();
+        request.setClienteId(1L);
+        request.setUsuarioId(1L);
+        request.setItens(itens);
+        request.setFormaPagamento("DINHEIRO");
+
+        Venda vendaResultado = vendaService.registrarVenda(request);
 
         assertEquals(new BigDecimal("50.00"), vendaResultado.getValorTotalVenda());
         assertEquals(clienteFake, vendaResultado.getCliente());
@@ -100,8 +106,14 @@ class VendaServiceTest {
         List<ItemVendaRequest> itens = new ArrayList<>();
         itens.add(itemRequest);
 
+        com.geladaobebidas.app.dto.RegistrarVendaRequest request = new com.geladaobebidas.app.dto.RegistrarVendaRequest();
+        request.setClienteId(1L);
+        request.setUsuarioId(1L);
+        request.setItens(itens);
+        request.setFormaPagamento("DINHEIRO");
+
         assertThrows(RecursoNaoEncontradoException.class, () -> {
-            vendaService.registrarVenda(1L, 1L, itens);
+            vendaService.registrarVenda(request);
         });
     }
 }
