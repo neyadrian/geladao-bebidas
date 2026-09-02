@@ -19,13 +19,13 @@ export default function Sidebar({ page, onNavigate, auth, onLogout }) {
   return (
     <>
       <header className="mobile-header">
-        <button className="hamburger-btn" onClick={() => setIsOpen(!isOpen)} aria-label="Menu">
-          ☰
-        </button>
         <div className="mobile-logo">
           <img src="/logo.png" alt="Logo Geladão" />
           <span>Geladão</span>
         </div>
+        <button className="hamburger-btn" onClick={() => setIsOpen(!isOpen)} aria-label="Menu">
+          ☰ Menu
+        </button>
       </header>
 
       <nav className={`sidebar ${isOpen ? "open" : ""}`} aria-label="Navegação principal">

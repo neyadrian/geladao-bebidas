@@ -295,6 +295,17 @@ h3 {
   outline: none;
 }
 
+@media (max-width: 640px) {
+  .field label {
+    font-size: 14px;
+  }
+  .field input,
+  .field select {
+    font-size: 16px;
+    padding: 14px 16px;
+  }
+}
+
 .field-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
