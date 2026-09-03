@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import Login from "./components/Login.jsx";
-import Sidebar from "./components/Sidebar.jsx";
+import Navbar from "./components/Navbar.jsx";
 import ProductsPage from "./components/ProductsPage.jsx";
 import ClientsPage from "./components/ClientsPage.jsx";
 import SalesPage from "./components/SalesPage.jsx";
@@ -58,11 +58,12 @@ export default function App() {
   const Page = PAGES[page] ?? ProductsPage;
 
   return (
-    <div className="app-shell">
-      <Sidebar page={page} onNavigate={setPage} auth={auth} onLogout={handleLogout} />
+    <div className="app-shell pt-16">
+      <Navbar page={page} onNavigate={setPage} auth={auth} onLogout={handleLogout} />
       <main className="main">
         <Page auth={auth} />
       </main>
     </div>
   );
 }
+
