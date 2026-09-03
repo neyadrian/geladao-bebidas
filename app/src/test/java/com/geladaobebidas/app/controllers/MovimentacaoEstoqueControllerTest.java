@@ -18,10 +18,17 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(MovimentacaoEstoqueController.class)
+@org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc(addFilters = false)
 public class MovimentacaoEstoqueControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @org.springframework.test.context.bean.override.mockito.MockitoBean
+    private com.geladaobebidas.app.security.JwtService jwtService;
+
+    @org.springframework.test.context.bean.override.mockito.MockitoBean
+    private org.springframework.security.core.userdetails.UserDetailsService userDetailsService;
 
     @MockitoBean
     private MovimentacaoEstoqueService movimentacaoEstoquesService;
@@ -33,7 +40,7 @@ public class MovimentacaoEstoqueControllerTest {
     public void deveSalvarMovimentacaoEstoque() throws Exception {
         MovimentacaoEstoque movimentacaoEstoque = new MovimentacaoEstoque();
 
-        mockMvc.perform(post("/movimentacao-estoque")
+        mockMvc.perform(post("/movimentacoes-estoque")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(movimentacaoEstoque)))
                 .andExpect(status().isCreated());
@@ -47,7 +54,7 @@ public class MovimentacaoEstoqueControllerTest {
 
         when(movimentacaoEstoquesService.buscarPorId(id)).thenReturn(movimentacaoEstoque);
 
-        mockMvc.perform(get("/movimentacao-estoque/{id}", id))
+        mockMvc.perform(get("/movimentacoes-estoque/{id}", id))
                 .andExpect(status().isOk());
     }
 
@@ -59,7 +66,7 @@ public class MovimentacaoEstoqueControllerTest {
 
         when(movimentacaoEstoquesService.listarTodas()).thenReturn(lista);
 
-        mockMvc.perform(get("/movimentacao-estoque"))
+        mockMvc.perform(get("/movimentacoes-estoque"))
                 .andExpect(status().isOk());
     }
 
@@ -68,7 +75,7 @@ public class MovimentacaoEstoqueControllerTest {
     public void deveExcluirMovimentacaoEstoque() throws Exception {
         Long id = 1L;
 
-        mockMvc.perform(delete("/movimentacao-estoque/{id}", id))
+        mockMvc.perform(delete("/movimentacoes-estoque/{id}", id))
                 .andExpect(status().isNoContent());
     }
 }

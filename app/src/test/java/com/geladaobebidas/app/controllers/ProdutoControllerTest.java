@@ -27,6 +27,12 @@ public class ProdutoControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
+    @org.springframework.test.context.bean.override.mockito.MockitoBean
+    private com.geladaobebidas.app.security.JwtService jwtService;
+
+    @org.springframework.test.context.bean.override.mockito.MockitoBean
+    private org.springframework.security.core.userdetails.UserDetailsService userDetailsService;
+
     @MockitoBean
     private ProdutoService produtoService;
 
