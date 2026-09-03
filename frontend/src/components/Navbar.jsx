@@ -31,8 +31,12 @@ export default function Navbar({ page, onNavigate, auth, onLogout }) {
 
           {/* DESKTOP: Logo Left | MOBILE: Logo Center */}
           <div className="flex justify-center md:justify-start w-1/3 md:w-auto">
-            <div className="flex items-center gap-2 cursor-pointer" onClick={() => onNavigate("produtos")}>
-              <span className="font-display text-xl font-bold tracking-wide">Geladão</span>
+            <div className="flex items-center gap-2 cursor-pointer group" onClick={() => onNavigate("produtos")}>
+              <img 
+                src="/logo.png" 
+                alt="Geladão" 
+                className="h-10 w-auto transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3" 
+              />
             </div>
           </div>
 
@@ -107,7 +111,11 @@ export default function Navbar({ page, onNavigate, auth, onLogout }) {
             >
               <div className="flex flex-col h-full p-6">
                 <div className="flex items-center justify-between mb-8 border-b border-white/20 pb-4">
-                  <span className="font-display text-2xl font-bold tracking-wide">Geladão</span>
+                  <img 
+                    src="/logo.png" 
+                    alt="Geladão" 
+                    className="h-10 w-auto transition-transform duration-300 hover:scale-110 hover:-rotate-3" 
+                  />
                   <button
                     onClick={() => setIsMobileMenuOpen(false)}
                     className="p-2 -mr-2 text-white/70 hover:text-white transition-colors"

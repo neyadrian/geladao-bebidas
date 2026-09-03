@@ -12,6 +12,7 @@ import {
 } from "../api.js";
 import { Banner, EmptyState, Loading } from "./Bits.jsx";
 import Pagination, { usePagination } from "./Pagination.jsx";
+import { Search } from "lucide-react";
 
 const emptyForm = {
   nomeProduto: "",
@@ -297,7 +298,7 @@ export default function ProductsPage({ auth }) {
           <h2>Produtos cadastrados</h2>
           <div style={{ display: "flex", alignItems: "center", gap: 10, marginLeft: "auto" }}>
             <div className="search-box">
-              <span className="search-icon" aria-hidden="true">🔍</span>
+              <Search size={16} className="search-icon" />
               <input
                 type="text"
                 value={search}
@@ -317,7 +318,7 @@ export default function ProductsPage({ auth }) {
         ) : produtos.length === 0 ? (
           <EmptyState glyph="🍺" title="Nenhum produto ainda" hint="Cadastre o primeiro produto acima." />
         ) : filtrados.length === 0 ? (
-          <EmptyState glyph="🔍" title="Nenhum produto encontrado" hint={`Nada bate com "${search}".`} />
+          <EmptyState glyph={<Search size={32} />} title="Nenhum produto encontrado" hint={`Nada bate com "${search}".`} />
         ) : (
           <>
             <div className="table-wrap">
