@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { login as apiLogin, ApiError } from "../api.js";
+import { motion } from "framer-motion";
 
 export default function Login({ onLogin }) {
   const [loginValue, setLoginValue] = useState("");
@@ -30,13 +31,44 @@ export default function Login({ onLogin }) {
   }
 
   return (
-    <div className="login-screen">
-      <div className="login-card">
-        <img src="/logo.png" alt="Geladão Bebidas" />
-        <h1>Geladão Bebidas</h1>
-        <span className="tagline">Painel de estoque e vendas</span>
-        <form onSubmit={handleSubmit}>
-          {error && <div className="banner banner-error">{error}</div>}
+    <div className="login-screen overflow-hidden">
+      <motion.div 
+        className="login-card"
+        initial={{ opacity: 0, y: 30, scale: 0.95 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
+      >
+        <motion.img 
+          src="/logo.png" 
+          alt="Geladão Bebidas" 
+          whileHover={{ scale: 1.1, rotate: 5 }}
+          transition={{ type: "spring", stiffness: 300, damping: 10 }}
+        />
+        <motion.h1
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.3, duration: 0.5 }}
+        >
+          Geladão Bebidas
+        </motion.h1>
+        <motion.span 
+          className="tagline block"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.4, duration: 0.5 }}
+        >
+          Painel de estoque e vendas
+        </motion.span>
+        <form onSubmit={handleSubmit} className="mt-4">
+          {error && (
+            <motion.div 
+              initial={{ opacity: 0, x: -10 }} 
+              animate={{ opacity: 1, x: 0 }} 
+              className="banner banner-error"
+            >
+              {error}
+            </motion.div>
+          )}
           <div className="field">
             <label htmlFor="login">Login</label>
             <input
@@ -48,7 +80,7 @@ export default function Login({ onLogin }) {
               autoComplete="username"
             />
           </div>
-          <div className="field">
+          <div className="field mt-2">
             <label htmlFor="senha">Senha</label>
             <input
               id="senha"
@@ -59,12 +91,12 @@ export default function Login({ onLogin }) {
               autoComplete="current-password"
             />
           </div>
-          <button className="btn btn-primary" type="submit" disabled={loading}>
+          <button className="btn btn-primary w-full mt-4" type="submit" disabled={loading}>
             {loading ? "Entrando…" : "Entrar"}
           </button>
         </form>
         <p className="login-foot">Acesso restrito à equipe do Geladão Bebidas.</p>
-      </div>
+      </motion.div>
     </div>
   );
 }

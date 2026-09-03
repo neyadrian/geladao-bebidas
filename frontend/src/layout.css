@@ -270,7 +270,7 @@
   min-height: 100vh;
   display: grid;
   place-items: center;
-  background: radial-gradient(circle at 20% 10%, #4a2d17 0%, #241408 55%, #170c04 100%);
+  background: var(--wood-950);
   padding: 24px;
 }
 
@@ -291,10 +291,11 @@
 }
 
 .login-card img {
+  display: block;
   width: 96px;
   height: 96px;
   object-fit: contain;
-  margin-bottom: 6px;
+  margin: 0 auto 6px auto;
 }
 
 .login-card h1 {
