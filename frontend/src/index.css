@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 :root {
   --wood-950: #241408;
   --wood-900: #38210f;
@@ -19,8 +23,8 @@
   --ok-600: #2f7a4f;
   --danger-600: #b0362a;
 
-  --font-display: "Fraunces", Georgia, serif;
-  --font-body: "Work Sans", "Segoe UI", sans-serif;
+  --font-display: "Poppins", Georgia, serif;
+  --font-body: "Poppins", "Segoe UI", sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
 
   --radius-sm: 8px;
@@ -96,27 +100,21 @@ h3 {
 /* ---------- Layout ---------- */
 
 .app-shell {
-  display: grid;
-  grid-template-columns: 260px minmax(0, 1fr);
+  display: block;
   min-height: 100vh;
 }
 
-@media (max-width: 860px) {
-  .app-shell {
-    grid-template-columns: minmax(0, 1fr);
-  }
-}
-
 .main {
-  padding: 36px 40px 60px;
-  max-width: 980px;
+  padding: 80px 40px 60px;
+  max-width: 1080px;
+  margin: 0 auto;
   width: 100%;
   min-width: 0;
 }
 
 @media (max-width: 860px) {
   .main {
-    padding: 72px 18px 48px; /* space for hamburger */
+    padding: 80px 18px 48px;
   }
 }
 
